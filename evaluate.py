@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 import sys
 
 import numpy as np
@@ -128,8 +129,15 @@ def main():
     if "args" in checkpoint:
         model_args = checkpoint["args"]
     else:
-        with open("output/config.json") as f:
-            model_args = json.load(f)
+        config_path = os.path.join(os.path.dirname(os.path.abspath(args.checkpoint)), "config.json")
+        if os.path.exists(config_path):
+            with open(config_path) as f:
+                model_args = json.load(f)
+        else:
+            model_args = {"n_genes": args.n_genes, "n_batches": args.n_batches,
+                          "n_cell_types": args.n_cell_types, "n_codes": 64,
+                          "latent_dim": 128, "hidden_dim": 256, "code_dim": 128,
+                          "use_adversary": False, "adversary_alpha": 1.0}
 
     model = VQVAE(
         n_genes=model_args.get("n_genes", args.n_genes),

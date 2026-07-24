@@ -40,6 +40,10 @@ class VectorQuantizer(nn.Module):
         self.codebook = nn.Embedding(n_codes, code_dim)
         self.codebook.weight.data.uniform_(-1.0 / n_codes, 1.0 / n_codes)
 
+    @property
+    def dtype(self):
+        return self.codebook.weight.dtype
+
     def forward(self, z):
         z = z.unsqueeze(1)
         codebook = self.codebook.weight.detach()
@@ -130,13 +134,16 @@ class VQVAE(nn.Module):
         hidden_dim=256,
         latent_dim=128,
         n_codes=64,
-        code_dim=128,
+        code_dim=None,
         commitment_cost=0.25,
         use_adversary=False,
         adversary_alpha=1.0,
     ):
         super().__init__()
+        if code_dim is None:
+            code_dim = latent_dim
         self.encoder = Encoder(n_genes, hidden_dim, latent_dim)
+        self.pre_vq = nn.Linear(latent_dim, code_dim) if latent_dim != code_dim else nn.Identity()
         self.vq = VectorQuantizer(n_codes, code_dim, commitment_cost)
         self.decoder = Decoder(code_dim, n_batches, hidden_dim, n_genes)
         self.use_adversary = use_adversary
@@ -151,6 +158,7 @@ class VQVAE(nn.Module):
         return self.encoder(x)
 
     def quantize(self, z):
+        z = self.pre_vq(z)
         return self.vq(z)
 
     def decode(self, z_q, batch_labels):

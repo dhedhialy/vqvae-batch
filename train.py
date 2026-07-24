@@ -185,9 +185,11 @@ def main():
             with open(f"{args.output_dir}/best_epoch.txt", "w") as f:
                 f.write(str(epoch))
 
+    save_config = vars(args)
+    save_config["n_params"] = n_params
     torch.save(
         {
-            "args": vars(args),
+            "args": save_config,
             "metrics": metrics,
             "model_state_dict": model.state_dict(),
         },
