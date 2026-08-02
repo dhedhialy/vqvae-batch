@@ -31,6 +31,7 @@ def generate_synthetic_data(
     n_cell_types=8,
     n_programs=20,
     seed=42,
+    return_counts=True,
 ):
     rng = np.random.RandomState(seed)
     batch_assignments = rng.randint(0, n_batches, size=n_cells)
@@ -46,20 +47,20 @@ def generate_synthetic_data(
         start = pg * genes_per_program
         end = start + genes_per_program if pg < n_programs - 1 else n_genes
         program_genes[pg, start:end] = rng.uniform(0.5, 1.5, size=end - start)
-    X = np.zeros((n_cells, n_genes))
+    counts = np.zeros((n_cells, n_genes), dtype=np.float32)
     for i in range(n_cells):
         base = program_strength[cell_type_assignments[i]] @ program_genes
         base += batch_offset[batch_assignments[i]]
         base += rng.randn(n_genes) * 0.3
-        base = np.exp(base)
-        counts = rng.poisson(np.clip(base, 0.01, 50))
-        X[i] = counts.astype(np.float32)
-    lib_size = X.sum(axis=1, keepdims=True)
-    X = X / lib_size * 10000
-    X = np.log1p(X)
-    high_var_idx = np.argsort(X.var(axis=0))[-1000:]
-    X = X[:, high_var_idx]
-    return X, batch_assignments, cell_type_assignments
+        base = np.exp(np.clip(base, 0.01, 4.5))
+        counts[i] = rng.poisson(np.clip(base, 0.01, 50)).astype(np.float32)
+    lib_size = counts.sum(axis=1, keepdims=True)
+    cpm = counts / np.maximum(lib_size, 1) * 10000
+    log_cpm = np.log1p(cpm)
+    high_var_idx = np.argsort(log_cpm.var(axis=0))[-1000:]
+    if return_counts:
+        return counts[:, high_var_idx].astype(np.float32), batch_assignments, cell_type_assignments
+    return log_cpm[:, high_var_idx], batch_assignments, cell_type_assignments
 
 
 def subsample_dataset(dataset, fraction=0.3, seed=42):

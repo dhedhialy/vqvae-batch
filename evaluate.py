@@ -9,8 +9,10 @@ import torch.nn.functional as F
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.preprocessing import LabelEncoder
+from torch.utils.data import DataLoader
 
 from data import generate_synthetic_data, create_dataloaders, SingleCellDataset
+from metrics import kbet, ilisi, bio_conservation
 from vqvae_batch import VQVAE
 
 
@@ -39,28 +41,43 @@ def get_representations(model, loader, device):
 
 
 def batch_classification_score(z, batch_labels):
+    """Cross-validated batch classifier accuracy. An in-sample RF always hits
+    ~1.0 by memorizing; CV measures actual residual batch info in z.
+    """
+    from sklearn.model_selection import StratifiedKFold
+
     le = LabelEncoder()
     y = le.fit_transform(batch_labels)
     n_classes = len(le.classes_)
     if n_classes < 2:
         return 0.0
-    clf = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
-    clf.fit(z, y)
-    return accuracy_score(y, clf.predict(z))
+    clf = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1, class_weight="balanced")
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    accs = []
+    for tr, te in cv.split(z, y):
+        clf.fit(z[tr], y[tr])
+        accs.append(accuracy_score(y[te], clf.predict(z[te])))
+    return float(np.mean(accs))
 
 
 def cell_type_classification_score(z, cell_types):
+    """Cross-validated cell-type classifier on z (higher = biology preserved)."""
+    from sklearn.model_selection import StratifiedKFold
+
     le = LabelEncoder()
     y = le.fit_transform(cell_types)
     n_classes = len(le.classes_)
     if n_classes < 2:
         return 0.0, 0.0
-    clf = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
-    clf.fit(z, y)
-    preds = clf.predict(z)
-    acc = accuracy_score(y, preds)
-    f1 = f1_score(y, preds, average="macro")
-    return acc, f1
+    clf = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1, class_weight="balanced")
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    accs, f1s = [], []
+    for tr, te in cv.split(z, y):
+        clf.fit(z[tr], y[tr])
+        preds = clf.predict(z[te])
+        accs.append(accuracy_score(y[te], preds))
+        f1s.append(f1_score(y[te], preds, average="macro"))
+    return float(np.mean(accs)), float(np.mean(f1s))
 
 
 def cross_batch_classification(z, batch_labels, cell_types):
@@ -148,6 +165,8 @@ def main():
         hidden_dim=model_args.get("hidden_dim", 256),
         use_adversary=model_args.get("use_adversary", False),
         adversary_alpha=model_args.get("adversary_alpha", 1.0),
+        use_ema=model_args.get("use_ema", False),
+        ema_decay=model_args.get("ema_decay", 0.99),
     ).to(device)
 
     state_dict = checkpoint.get("model_state_dict", checkpoint)
@@ -162,9 +181,11 @@ def main():
         n_cell_types=args.n_cell_types,
         seed=99,
     )
-    _, loader, _ = create_dataloaders(
+    print("Preparing evaluation data...")
+    _, _, dataset = create_dataloaders(
         X, batches, cell_types, batch_size=args.batch_size
     )
+    loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False)
 
     print("Computing representations...")
     reps = get_representations(model, loader, device)
@@ -177,6 +198,20 @@ def main():
     batch_acc = batch_classification_score(reps["z"], reps["batch"])
     results["batch_classifier_accuracy"] = float(batch_acc)
     print(f"  Batch classifier acc: {batch_acc:.4f}")
+
+    print("kBET and iLISI...")
+    kbet_score = kbet(reps["z"], reps["batch"])
+    ilsisi = ilisi(reps["z"], reps["batch"])
+    results["kbet_rejection_rate"] = float(kbet_score)
+    results["ilisi"] = ilsisi
+    print(f"  kBET rejection rate: {kbet_score:.4f}")
+    print(f"  iLISI: {ilsisi:.4f}")
+
+    print("Biology conservation (clustering)...")
+    bio = bio_conservation(reps["z"], reps["cell_type"])
+    results["bio_ari"] = bio["ari"]
+    results["bio_nmi"] = bio["nmi"]
+    print(f"  ARI: {bio['ari']:.4f}, NMI: {bio['nmi']:.4f}")
 
     print("Cell type classification score...")
     ct_acc, ct_f1 = cell_type_classification_score(reps["z"], reps["cell_type"])
