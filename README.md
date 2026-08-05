@@ -1,6 +1,12 @@
 # VQ-VAE for scRNA-seq with Batch Effect Correction
 
-Discrete representation learning for single-cell RNA-seq with batch-aware decoding, adversarial batch disentanglement, and cell-type classification.
+Discrete representation learning for single-cell RNA-seq with batch-aware decoding,
+adversarial batch disentanglement, and cell-type classification.
+
+Real-data training matches scVI on batch mixing, cell-type conservation, and
+cross-batch transfer — while yielding a discrete 64-code latent the baselines lack.
+See `DISENTANGLE_RESULTS.md` and `PROJECT_UPDATE.md` for the full results (161k cells,
+15 donors, 16 cell types).
 
 ## Quick Start
 
@@ -40,24 +46,54 @@ Data is generated synthetically by default — no scRNA-seq files needed.
 
 ## Real scRNA-seq Data
 
-To use real data (coming soon), place your AnnData file in `data/` and use:
+Train and evaluate on real `.h5ad` data with a Negative-Binomial VQ-VAE. The loader
+returns **raw integer counts** (from `.raw`) — the correct input for NB
+reconstruction — while selecting the same highly-variable gene set the scVI baselines use,
+so metrics are directly comparable.
 
-```python
-from data import load_real_data
-X, batches, cell_types = load_real_data("data/my_data.h5ad")
+```bash
+# Train on real data (GPU recommended; 161k-cell dataset takes ~4 min/15 epochs)
+python train_real.py \
+  --data-path data/cellxgene.h5ad \
+  --batch-key donor_id --celltype-key cell_type \
+  --n-top-genes 2000 --max-batches 15 --max-cell-types 20 \
+  --use-ema --use-adversary --alpha-ramp 8 --adversary-alpha 0.5 \
+  --device cuda
+
+# Evaluate with the same metrics as the baselines (batch LISI, cell-type LISI,
+# leave-one-donor-out transfer accuracy)
+python eval_real.py --checkpoint output/best.pt --data-path data/cellxgene.h5ad
 ```
+
+Key real-data flags:
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--batch-key` | `donor_id` | obs column encoding technical batches |
+| `--celltype-key` | `cell_type` | obs column encoding cell types |
+| `--min-cells-per-batch` | 50 | drop batches with fewer cells |
+| `--n-top-genes` | 2000 | HVG selection count |
+| `--use-ema` | off | EMA codebook (more stable than gradients) |
+| `--restart-dead-codes` | off | resample unused codes mid-training |
+| `--mmd-weight` | 0 | kernel MMD batch regularizer (**not recommended on real data** — collapses cell types; see DISENTANGLE_RESULTS.md) |
+| `--code-batch-weight` | 2.0 | code↔batch independence regularizer |
+| `--use-adversary` | off | DANN-style adversarial batch classifier |
+| `--alpha-ramp` | 6 | epochs over which the adversary ramps up |
 
 ## Architecture
 
 ```
 cell counts -> Encoder -> continuous embedding
 continuous embedding -> VectorQuantizer -> discrete code
-discrete code + batch embedding -> Decoder -> reconstructed counts
+discrete code + batch embedding -> Decoder -> Negative-Binomial (mu, theta, pi)
                         |
               Adversary (optional) -> predict batch (gradient reversed)
                         |
               Classifier (optional) -> predict cell type
 ```
+
+NB recon = mean negative-log NB likelihood over raw counts, with library-size scaling
+from the per-cell count sum (no learned library size, per `vqvae_batch.py:308`).
 
 ## Key Parameters
 

@@ -263,3 +263,22 @@ The first goal is not to invent a new loss immediately. It is to determine where
 - What should one discrete VQ code mean biologically?
 - Can the same code be linked to similar genes and pathways in different batches?
 - Does improved interpretability reduce downstream accuracy, and how much reduction is acceptable?
+
+## Status
+
+The plan through "Day 5" is complete:
+
+- **Real-data loader** (`data_real.py`) returns raw counts from `.raw` for the NB
+  head, with the same HVG selection and filtering as the scVI baselines.
+- **NB VQ-VAE** (`train_real.py`) with EMA codebook, dead-code restart, and the scVI-style
+  batch/biology disentanglement regularizers.
+- **Evaluation** (`eval_real.py`) uses the exact metrics and same dataset as the
+  baselines (161,152 cells, 15 donors, 16 cell types).
+
+Results: a hyperparameter sweep showed kernel MMD collapses biology on real data
+(cell-type LISI 3.3–4.9), while the DANN adversary at α = 0.5 matches scVI on all three
+axes — batch LISI 3.10 vs 3.28–3.66, cell-type LISI 1.40 vs 1.39–1.42, cross-batch
+accuracy 0.857 vs 0.85–0.87 — with the added benefit of a discrete 64-code latent.
+
+Next: run pathway case studies to validate that model-identified codes correspond to
+known cell-type-specific genes and biological pathways.
