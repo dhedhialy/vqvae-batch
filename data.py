@@ -24,6 +24,108 @@ class SingleCellDataset(Dataset):
         return item
 
 
+def load_cellxgene_data(
+    h5ad_path,
+    batch_key="batch",
+    celltype_key="cell_type",
+    min_cells_per_batch=20,
+    min_cells_per_type=10,
+    n_top_genes=2000,
+    max_batches=20,
+    max_cell_types=20,
+    seed=42,
+):
+    try:
+        import anndata as ad
+    except ImportError:
+        raise ImportError("anndata is required for real data loading: pip install anndata")
+    import scanpy as sc
+    from sklearn.preprocessing import LabelEncoder
+
+    print(f"Loading {h5ad_path}...")
+    adata = ad.read_h5ad(h5ad_path)
+    print(f"  Raw shape: {adata.shape}")
+
+    if batch_key not in adata.obs.columns:
+        raise ValueError(f"Batch key '{batch_key}' not found. Available: {list(adata.obs.columns)}")
+    if celltype_key not in adata.obs.columns:
+        raise ValueError(f"Cell type key '{celltype_key}' not found. Available: {list(adata.obs.columns)}")
+
+    adata.obs[batch_key] = adata.obs[batch_key].astype(str)
+    adata.obs[celltype_key] = adata.obs[celltype_key].astype(str)
+
+    batch_counts = adata.obs[batch_key].value_counts()
+    keep_batches = batch_counts[batch_counts >= min_cells_per_batch].index.tolist()
+    if len(keep_batches) > max_batches:
+        keep_batches = batch_counts.loc[keep_batches].nlargest(max_batches).index.tolist()
+    adata = adata[adata.obs[batch_key].isin(keep_batches)].copy()
+    print(f"  After filtering batches (>= {min_cells_per_batch} cells, max {max_batches}): {adata.shape[0]} cells, {adata.obs[batch_key].nunique()} batches")
+
+    ct_counts = adata.obs[celltype_key].value_counts()
+    keep_types = ct_counts[ct_counts >= min_cells_per_type].index.tolist()
+    if len(keep_types) > max_cell_types:
+        keep_types = ct_counts.loc[keep_types].nlargest(max_cell_types).index.tolist()
+    adata = adata[adata.obs[celltype_key].isin(keep_types)].copy()
+    print(f"  After filtering cell types (>= {min_cells_per_type} cells, max {max_cell_types}): {adata.shape[0]} cells, {adata.obs[celltype_key].nunique()} cell types")
+
+    if adata.X.shape[1] > n_top_genes:
+        from scipy.sparse import issparse
+        if issparse(adata.X):
+            adata.X = adata.X.toarray()
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            sc.pp.normalize_total(adata, target_sum=1e4)
+            sc.pp.log1p(adata)
+            sc.pp.highly_variable_genes(adata, n_top_genes=n_top_genes, flavor="seurat")
+        adata = adata[:, adata.var["highly_variable"]].copy()
+        print(f"  After HVG selection: {adata.shape[1]} genes")
+    else:
+        from scipy.sparse import issparse
+        if issparse(adata.X):
+            adata.X = adata.X.toarray()
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            sc.pp.normalize_total(adata, target_sum=1e4)
+            sc.pp.log1p(adata)
+
+    n_before = adata.shape[0]
+    X = np.array(adata.X, dtype=np.float32)
+    valid = ~np.isnan(X).any(axis=1) & ~np.isinf(X).any(axis=1)
+    X = X[valid]
+    batch_labels = adata.obs[batch_key].values[valid]
+    cell_type_labels = adata.obs[celltype_key].values[valid]
+    n_removed = n_before - X.shape[0]
+    if n_removed > 0:
+        print(f"  Removed {n_removed} cells with NaN/Inf values")
+
+    batch_enc = LabelEncoder()
+    batch_ints = batch_enc.fit_transform(batch_labels)
+    n_batches = len(batch_enc.classes_)
+    print(f"  Batch mapping: {dict(zip(batch_enc.classes_, range(n_batches)))}")
+
+    ct_enc = LabelEncoder()
+    ct_ints = ct_enc.fit_transform(cell_type_labels)
+    n_cell_types = len(ct_enc.classes_)
+    print(f"  Cell type mapping: {dict(zip(ct_enc.classes_, range(n_cell_types)))}")
+
+    print(f"  Final: {X.shape[0]} cells x {X.shape[1]} genes, {n_batches} batches, {n_cell_types} cell types")
+    # Gene names (use feature_name column if present, else var_names)
+    if "feature_name" in adata.var.columns:
+        gene_names = adata.var["feature_name"].astype(str).values
+    else:
+        gene_names = np.asarray(adata.var_names)
+    return X, batch_ints, ct_ints, {
+        "n_batches": n_batches,
+        "n_cell_types": n_cell_types,
+        "n_genes": X.shape[1],
+        "batch_classes": batch_enc.classes_.tolist(),
+        "celltype_classes": ct_enc.classes_.tolist(),
+        "gene_names": gene_names.tolist(),
+    }
+
+
 def generate_synthetic_data(
     n_cells=5000,
     n_genes=2000,
