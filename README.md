@@ -104,3 +104,50 @@ from the per-cell count sum (no learned library size, per `vqvae_batch.py:308`).
 | `--n-batches` | 5 | Number of batches |
 | `--use-adversary` | False | Enable adversarial batch classifier |
 | `--subsample` | None | Fraction of data to use (e.g. 0.3) |
+
+## Disentanglement Framework (ID + OOD)
+
+Use `eval_disentanglement.py` to evaluate batch/assay leakage, biological retention,
+and code-usage alignment under both in-distribution and OOD splits.
+
+```bash
+python eval_disentanglement.py \
+  --checkpoint output/real_vqvae/best.pt \
+  --id-data-path data/in_distribution.h5ad \
+  --ood-data-paths data/ood_protocol.h5ad,data/ood_tissue.h5ad \
+  --ood-names protocol_ood,tissue_ood \
+  --batch-fields dataset_id,assay \
+  --bio-field cell_type \
+  --transfer-group-field dataset_id \
+  --context-field coarse_cell_type \
+  --max-cells-per-split 200000 \
+  --output output/disentanglement_eval.json
+```
+
+Main outputs:
+- Probe metrics for leakage and retention (`logreg` + `RF`, acc and macro-F1),
+- LISI per target field (batch-like and biological),
+- Leave-one-group transfer for biological labels,
+- Conditional code-usage TV distance by context,
+- ID→OOD probe transfer on overlapping classes.
+
+## Controlled-Biology Subset Builder
+
+Use `build_controlled_subset.py` to create a matched-biology training subset before OOD
+generalization tests.
+
+```bash
+python build_controlled_subset.py \
+  --data-path data/atlas_full.h5ad \
+  --output-h5ad data/atlas_matched.h5ad \
+  --batch-field dataset_id \
+  --celltype-field cell_type \
+  --constraints tissue=lung,disease=healthy \
+  --min-cells-per-batch 1000 \
+  --max-batches 30 \
+  --max-cells 300000
+```
+
+This writes:
+- a filtered `.h5ad` subset for controlled training,
+- a JSON manifest recording constraints and final batch/cell-type counts.
