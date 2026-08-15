@@ -189,17 +189,22 @@ def build_markdown(scorecard: Dict[str, Any], manifest: Dict[str, Any] | None) -
 
 def build_figures(scorecard: Dict[str, Any], out_dir: Path) -> List[str]:
     written: List[str] = []
+    def _bar(ax, xs, vals, width, label):
+        ok = [(x, v) for x, v in zip(xs, vals) if v is not None]
+        if ok:
+            ax.bar([x for x, _ in ok], [v for _, v in ok], width=width, label=label)
+
     for bname, bundle in scorecard.get("bundles", {}).items():
         reps = bundle.get("representations", {})
         views = [v for v in SHOW_VIEWS if v in reps]
         dataset = [_probe_acc(reps[v], "dataset_id") for v in views]
         assay = [_probe_acc(reps[v], "assay") for v in views]
         bio = [_probe_acc(reps[v], "coarse_cell_type") for v in views]
-        x = range(len(views))
+        x = list(range(len(views)))
         fig, ax = plt.subplots(figsize=(10, 4.5))
-        ax.bar([i - 0.3 for i in x], dataset, width=0.25, label="dataset_id probe acc")
-        ax.bar(x, assay, width=0.25, label="assay probe acc")
-        ax.bar([i + 0.3 for i in x], bio, width=0.25, label="coarse cell type probe acc")
+        _bar(ax, [i - 0.3 for i in x], dataset, 0.25, "dataset_id probe acc")
+        _bar(ax, x, assay, 0.25, "assay probe acc")
+        _bar(ax, [i + 0.3 for i in x], bio, 0.25, "coarse cell type probe acc")
         ax.set_xticks(list(x))
         ax.set_xticklabels([v.replace("_", "\n") for v in views], rotation=0, fontsize=8)
         ax.set_ylim(0, 1)
