@@ -43,6 +43,28 @@ with it, and w = 0.50 is over-regularised — the codebook collapses
 (active-code ratio 0.89, entropy 0.77) and *matched-OOD leakage rises back to
 0.96×*. w = 0.02 is the only weight that passes a rung (disease OOD).
 
+## Broad matched-biology sweep (bt5): fixing the retention failure
+
+The single-tissue retrain's weakness was **specialization**: cerebrocortex +
+`10x 3' v3` only, so protocol/tissue OOD retention fell below the 0.9 bar at
+every weight. `atlas_bt5_train` (cerebral cortex + blood + lung, healthy ≥ 80%,
+age 10–90, three assays: `10x 3' v3` / `10x 3' v2` / `10x 5' v2`) restores
+retention and the dial then delivers the first multi-rung passes — see
+`bt5/BT5.md` and `bt5/bt5_frontier.png`.
+
+| Rung | v6 baseline | bt5 w=0.02 | bt5 w=0.10 | bt5 w=0.30 | bt5 w=0.50 |
+|---|---|---|---|---|---|
+| Protocol OOD | 0.842 / 0.992 | 0.798 / 0.891 | 0.831 / 0.921 | 0.630 / **0.969** | **0.434 / 1.041 — PASS** |
+| Tissue OOD | 0.915 / 1.066 | 0.796 / 1.051 | 0.674 / 0.985 | 0.585 / 0.859 | 0.543 / 0.812 |
+| Disease OOD | 0.585 / 1.138 | **0.446 / 1.039 — PASS** | **0.352 / 1.177 — PASS** | **0.109 / 1.021 — PASS** | **0.000 / 0.969 — PASS** |
+
+Headline: the **disease rung passes at every weight** (probe is blind at
+w=0.50, 0.00× vs 0.64× input leak) and **protocol OOD — unseen assays — passes
+at w=0.50**. Remaining gaps are structural: the tissue rung is kidney (no
+healthy kidney datasets exist to train on), and the bt5 matched rung mixes
+tissue composition into the dataset probe (the single-tissue v2 matched rung
+remains the clean batch-transfer test at 0.77×).
+
 ## What this shows
 
 1. **Disease OOD is the first rung where the model passes the full
@@ -78,10 +100,16 @@ with it, and w = 0.50 is over-regularised — the codebook collapses
 - `scorecard_report.md` + `scorecard_*.png` — full baseline reports
 - `retrain/scorecard_report.md` + `retrain/scorecard_*.png` — retrain reports
 - `sweep/SWEEP.md` + `sweep/sweep_frontier.png` — weight sweep frontier
+- `bt5/BT5.md` + `bt5/bt5_frontier.png` — broad matched-biology sweep
 - `make_scorecard_report.py` — offline generator from `disentanglement_scorecard.json`
 - `make_sweep_report.py` — offline generator from the four scorecard JSONs
+- `make_bt5_report.py` — offline generator for the bt5 ladder
 - Raw JSONs on server: `atlas_v6_log1p_s20260809/disentanglement_scorecard.json`
   (merged 5-bundle version incl. matched-OOD rung),
   `atlas_matched_bio_v2_s20260815/disentanglement_scorecard.json`,
   `atlas_matched_bio_w0.10_s20260816/disentanglement_scorecard.json`,
-  `atlas_matched_bio_w0.50_s20260816/disentanglement_scorecard.json`
+  `atlas_matched_bio_w0.50_s20260816/disentanglement_scorecard.json`,
+  `atlas_bt5_w0.02_s20260816/disentanglement_scorecard.json`,
+  `atlas_bt5_w0.10_s20260816/disentanglement_scorecard.json`,
+  `atlas_bt5_w0.30_s20260816/disentanglement_scorecard.json`,
+  `atlas_bt5_w0.50_s20260816/disentanglement_scorecard.json`
