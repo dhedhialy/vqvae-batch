@@ -19,12 +19,29 @@ thresholds and OOD ladders. Reports: `scorecard_report.md` (baseline,
 | Rung (bundle) | v6 baseline: bio leak (rel.) / bio retention | Retrain: bio leak (rel.) / bio retention | Retrain verdict |
 |---|---|---|---|
 | In-distribution test | 0.966 / 1.051 | — | fail (leakage) |
-| **Matched-biology OOD** (unseen datasets, same biology) | — | **0.773 / 0.986** | leak reduced, biology kept |
+| **Matched-biology OOD** (unseen datasets, same biology) | **1.238 / 1.042** | **0.773 / 0.986** | leak reduced, biology kept |
 | Protocol OOD | 0.842 / 0.992 | 0.734 / 0.813 | biology retention drops |
 | Tissue OOD | 0.915 / 1.066 | 0.730 / 0.811 | biology retention drops |
 | **Disease OOD** | 0.585 / 1.138 | **0.312 / 0.934** | **PASS: disentangled** |
 
 Thresholds: bio leakage ≤ 0.5× input, biology retention ≥ 0.9× input.
+
+> The v6 cell on the matched-OOD rung (1.238×) comes from a dedicated
+> rerun of the v6 checkpoint against `atlas_matched_biology_v2_matched_ood`
+> (whole-dataset holdout). It completes the baseline row: with all four rungs
+> measured, the all-atlas baseline never cuts dataset leakage on *any* rung.
+
+## Weight sweep
+
+`model.conditional_code_usage_weight` is the dial controlling how strongly the
+conditional (batch) codes are penalised for carrying biology. Three retrains
+on the same matched-biology split (w = 0.02 default, 0.10, 0.50) give a
+leakage-vs-retention frontier — see `sweep/SWEEP.md` and
+`sweep/sweep_frontier.png`. Short version: leakage falls monotonically with
+weight on every rung (disease: 0.31 → 0.21 → 0.11×), biology retention falls
+with it, and w = 0.50 is over-regularised — the codebook collapses
+(active-code ratio 0.89, entropy 0.77) and *matched-OOD leakage rises back to
+0.96×*. w = 0.02 is the only weight that passes a rung (disease OOD).
 
 ## What this shows
 
@@ -60,6 +77,11 @@ Thresholds: bio leakage ≤ 0.5× input, biology retention ≥ 0.9× input.
 
 - `scorecard_report.md` + `scorecard_*.png` — full baseline reports
 - `retrain/scorecard_report.md` + `retrain/scorecard_*.png` — retrain reports
+- `sweep/SWEEP.md` + `sweep/sweep_frontier.png` — weight sweep frontier
 - `make_scorecard_report.py` — offline generator from `disentanglement_scorecard.json`
-- Raw JSONs on server: `atlas_v6_log1p_s20260809/disentanglement_scorecard.json`,
-  `atlas_matched_bio_v2_s20260815/disentanglement_scorecard.json`
+- `make_sweep_report.py` — offline generator from the four scorecard JSONs
+- Raw JSONs on server: `atlas_v6_log1p_s20260809/disentanglement_scorecard.json`
+  (merged 5-bundle version incl. matched-OOD rung),
+  `atlas_matched_bio_v2_s20260815/disentanglement_scorecard.json`,
+  `atlas_matched_bio_w0.10_s20260816/disentanglement_scorecard.json`,
+  `atlas_matched_bio_w0.50_s20260816/disentanglement_scorecard.json`
