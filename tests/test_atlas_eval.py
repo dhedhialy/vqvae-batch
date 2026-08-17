@@ -249,6 +249,41 @@ def test_bundle_verdict_fails_when_biology_is_over_corrected():
     assert not checks["disentangled"]
 
 
+def test_bundle_verdict_accepts_custom_bio_views():
+    representations = {
+        "input_expression": {"summary": {
+            "dataset_leakage_ratio": 0.8, "cross_dataset_cell_type_balanced_accuracy": 0.7}},
+        "latent": {"summary": {
+            "dataset_leakage_ratio": 0.2, "cross_dataset_cell_type_balanced_accuracy": 0.68}},
+    }
+    args = _scorecard_args()
+    verdict = scorecard.bundle_verdict(representations, args, bio_views=("latent",))
+    checks = verdict["views"]["latent"]
+    assert checks["relative_dataset_leakage"] == pytest.approx(0.25)
+    assert checks["disentangled"]
+    assert "bio_z_q" not in verdict["views"]
+
+
+def test_score_bundle_skips_vq_diagnostics_without_codes():
+    rng = np.random.default_rng(0)
+    n = 120
+    features = rng.normal(size=(n, 4))
+    pack = _FakePack(
+        {
+            "dataset_id": np.array(["d1"] * (n // 2) + ["d2"] * (n // 2)),
+            "coarse_cell_type": np.array(["t", "b"] * (n // 2)),
+        },
+        np.empty((n, 0), dtype=np.int64),
+        np.empty((n, 0), dtype=np.float32),
+        codebook_size=16,
+    )
+    pack.representations = {"input_expression": features, "latent": features}
+    args = _scorecard_args(representations=["input_expression", "latent"], skip_neighbor_metrics=True)
+    bundle = scorecard.score_bundle(pack, args, None, bio_views=("latent",), include_vq_diagnostics=False)
+    assert "vq_diagnostics" not in bundle
+    assert "latent" in bundle["verdict"]["views"]
+
+
 def test_vq_diagnostics_ranks_batch_leaking_axes_first():
     rng = np.random.default_rng(0)
     n = 200

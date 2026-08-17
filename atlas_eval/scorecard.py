@@ -230,7 +230,9 @@ def vq_diagnostics(pack: "RepresentationPack", args: argparse.Namespace) -> Dict
     }
 
 
-def bundle_verdict(representations: Dict[str, Any], args: argparse.Namespace) -> Dict[str, Any]:
+def bundle_verdict(
+    representations: Dict[str, Any], args: argparse.Namespace, bio_views: Sequence[str] = BIO_VIEWS
+) -> Dict[str, Any]:
     reference = representations.get("input_expression", {}).get("summary", {})
     technical = representations.get("technical_embedding", {}).get("summary", {})
     verdict: Dict[str, Any] = {
@@ -238,7 +240,7 @@ def bundle_verdict(representations: Dict[str, Any], args: argparse.Namespace) ->
         "reference_representation": "input_expression",
         "views": {},
     }
-    for view in BIO_VIEWS:
+    for view in bio_views:
         summary = representations.get(view, {}).get("summary")
         if not summary:
             continue
@@ -272,7 +274,11 @@ def bundle_verdict(representations: Dict[str, Any], args: argparse.Namespace) ->
 
 
 def score_bundle(
-    pack: "RepresentationPack", args: argparse.Namespace, fit_pack: Optional["RepresentationPack"]
+    pack: "RepresentationPack",
+    args: argparse.Namespace,
+    fit_pack: Optional["RepresentationPack"],
+    bio_views: Sequence[str] = BIO_VIEWS,
+    include_vq_diagnostics: bool = True,
 ) -> Dict[str, Any]:
     representations = {}
     for name in args.representations:
@@ -280,14 +286,16 @@ def score_bundle(
         if features is None:
             continue
         representations[name] = score_representation(name, features, pack, args, fit_pack)
-    return {
+    bundle: Dict[str, Any] = {
         "splits": pack.meta["splits"],
         "num_cells": pack.meta["num_cells"],
         "num_datasets": int(len(set(M.clean_labels(pack.labels.get("dataset_id", [])).tolist()))),
         "representations": representations,
-        "vq_diagnostics": vq_diagnostics(pack, args),
-        "verdict": bundle_verdict(representations, args),
+        "verdict": bundle_verdict(representations, args, bio_views=bio_views),
     }
+    if include_vq_diagnostics and pack.code_indices is not None and pack.code_indices.size:
+        bundle["vq_diagnostics"] = vq_diagnostics(pack, args)
+    return bundle
 
 
 def main(argv: Optional[Sequence[str]] = None) -> Dict[str, Any]:

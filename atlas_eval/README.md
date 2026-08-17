@@ -18,6 +18,8 @@ builder and runtime directly.
 | `representations.py` | encodes a bundle into every scored view of the same cells | yes |
 | `scorecard.py` | orchestration + JSON scorecard + verdicts | only to extract |
 | `matched_biology.py` | builds the biology-matched training subset and its matched-OOD holdout | no |
+| `baselines.py` | trains scVI / scANVI on the same bundles and scores their latent with the shared metric set | yes |
+| `benchmark.py` | aggregates scorecard JSONs into one unified benchmark table across settings and models | no |
 | `adversary_monitor.py` | early-warning for the encoder/adversary chase that killed the v6 adversary | no |
 
 ## 1. Scorecard
@@ -77,7 +79,42 @@ first and the protocol/tissue/disease rungs after. Bio codes that mix unseen
 transferred; bio codes that look clean in-distribution but leak on the matched
 holdout mean dataset-specific quirks were fitted instead.
 
-## 3. Adversary chase monitor
+## 3. Baseline models (scVI / scANVI)
+
+```bash
+python -m atlas_eval.baselines \
+    --config configs/v6_weak_supervision.yaml \
+    --method scvi \
+    --fit-data-run-id atlas_bt5_train \
+    --target-data-run-ids atlas_bt5_matched_ood atlas_ood_unseen_protocol_2608 \
+        atlas_ood_unseen_tissue_2608 atlas_ood_disease_2608 \
+    --run-id scvi_bt5 --max-cells 40000 --max-fit-cells 40000 --train-max-cells 250000
+```
+
+Same records, same gene vocabulary, same `H5CSRDataset` loads as the VQ-VAE
+training path; scVI trains on raw counts with `dataset_id` as the batch key,
+scANVI adds the `coarse_cell_type` labels (semi-supervised). The posterior-mean
+latent is scored by the same probes / iLISI / cLISI / kBET / transfer suite and
+the same verdict thresholds; the JSON schema is identical to the VQ-VAE
+scorecard (bio view `latent`). Training can be slow at 10k genes — keep
+`--train-max-cells` ≤ 250k unless you have time.
+
+## 4. Unified benchmark
+
+```bash
+python -m atlas_eval.benchmark \
+    --model "ours bt5 w=0.50" results/bt5/../..json \
+    --model "scVI" /stor/znx/vq_2608_runs/scvi_bt5/baseline_scorecard.json \
+    --model "scANVI" /stor/znx/vq_2608_runs/scanvi_bt5/baseline_scorecard.json \
+    --output results/benchmark/BENCHMARK.md
+```
+
+One fixed matrix: settings (matched v2 / matched bt5 / protocol / tissue /
+disease OOD) × models (ours, scVI, scANVI), identical metrics and thresholds.
+The orchestrator only aggregates existing scorecard JSONs — each cell is
+reproducible by a single command from sections 1–3.
+
+## 5. Adversary chase monitor
 
 If the adversary is re-enabled (`batch_adversary_weight > 0`), wire the monitor
 into the training loop so an oscillating run aborts in minutes instead of hours:
