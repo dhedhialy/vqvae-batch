@@ -41,7 +41,8 @@ scVI and scANVI trained on the same `atlas_bt5_train` bundle (256-dim latent,
 
 Both baselines leak as much or more than raw input on every rung, including
 **matched OOD they were trained on** (1.4–4.3×), and neither passes any rung.
-Full table + scorecards: `results/benchmark/BENCHMARK.md`.
+Full frontier table (all four bt5 weights + both baselines) + scorecards:
+`results/benchmark/BENCHMARK.md`.
 
 ## Reading this ladder
 
