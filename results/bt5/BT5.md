@@ -41,8 +41,11 @@ scVI and scANVI trained on the same `atlas_bt5_train` bundle (256-dim latent,
 
 Both baselines leak as much or more than raw input on every rung, including
 **matched OOD they were trained on** (1.4–4.3×), and neither passes any rung.
-Full frontier table (all four bt5 weights + both baselines) + scorecards:
-`results/benchmark/BENCHMARK.md`.
+The matched-v2 rung (filled for all bt5 weights) stays 0.72–1.26× for ours —
+the weak-batch/strong-biology case is the hard one for every model; the v6
+single-tissue retrain (0.77×, `results/sweep`) remains the cleanest matched
+cell. Full frontier table (v6 + all four bt5 weights + both baselines) +
+scorecards: `results/benchmark/BENCHMARK.md`.
 
 ## Reading this ladder
 
