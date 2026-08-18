@@ -1,0 +1,2809 @@
+{
+  "schema_version": "1.0",
+  "run_id": "scanvi_bt5_s20260816",
+  "model_type": "scanvi",
+  "atlas_data_run_id": "atlas_bt5_train",
+  "training": {
+    "method": "scanvi",
+    "n_latent": 256,
+    "epochs_run": null,
+    "train_cells": null,
+    "early_stopping": null,
+    "score_only": true
+  },
+  "settings": {
+    "method": "scanvi",
+    "fit_data_run_id": "atlas_bt5_train",
+    "target_data_run_ids": [
+      "atlas_bt5_matched_ood",
+      "atlas_matched_biology_v2_matched_ood",
+      "atlas_ood_unseen_protocol_2608",
+      "atlas_ood_unseen_tissue_2608",
+      "atlas_ood_disease_2608"
+    ],
+    "fit_splits": [
+      "train"
+    ],
+    "val_split": "val",
+    "score_splits": [
+      "train",
+      "val",
+      "test"
+    ],
+    "representations": [
+      "input_expression",
+      "latent"
+    ],
+    "max_cells": 40000,
+    "max_fit_cells": 40000,
+    "train_max_cells": 250000,
+    "n_latent": 256,
+    "max_epochs": 120,
+    "early_stopping_patience": 12,
+    "batch_size": null,
+    "seed": 1701,
+    "projection_dim": 256,
+    "probe_model": "linear",
+    "probe_min_class_count": 32,
+    "probe_max_train_per_class": 1024,
+    "lisi_cells": 20000,
+    "lisi_k": 90,
+    "kbet_cells": 10000,
+    "kbet_k": 40,
+    "skip_neighbor_metrics": false,
+    "transfer_folds": 5,
+    "output": null,
+    "score_only": true,
+    "max_relative_dataset_leakage": 0.5,
+    "min_relative_biology_retention": 0.9,
+    "min_technical_branch_dataset_leakage": 0.8,
+    "max_technical_branch_biology_leakage": 0.2
+  },
+  "config_path": "/stor/znx/vq_2608/configs/v6_weak_supervision.yaml",
+  "bundles": {
+    "atlas_bt5_matched_ood": {
+      "splits": [
+        "train",
+        "val",
+        "test"
+      ],
+      "num_cells": 40000,
+      "num_datasets": 10,
+      "representations": {
+        "input_expression": {
+          "batch_leakage": {
+            "probes": {
+              "dataset_id": {
+                "model": "linear",
+                "accuracy": 0.76405,
+                "balanced_accuracy": 0.4868283610424264,
+                "macro_f1": 0.47056405249693495,
+                "majority_baseline": 0.55515,
+                "uniform_chance": 0.1,
+                "num_classes": 10,
+                "num_train_cells": 7707,
+                "num_test_cells": 20000
+              },
+              "assay": {
+                "model": "linear",
+                "accuracy": 0.9986,
+                "balanced_accuracy": 0.9984599334112756,
+                "macro_f1": 0.9985824077367162,
+                "majority_baseline": 0.55515,
+                "uniform_chance": 0.5,
+                "num_classes": 2,
+                "num_train_cells": 2048,
+                "num_test_cells": 20000
+              },
+              "donor_id": {
+                "model": "linear",
+                "accuracy": 0.5838543992853953,
+                "balanced_accuracy": 0.5579567581032179,
+                "macro_f1": 0.5550329120549928,
+                "majority_baseline": 0.39325591782045555,
+                "uniform_chance": 0.16666666666666666,
+                "num_classes": 6,
+                "num_train_cells": 4168,
+                "num_test_cells": 8956
+              }
+            },
+            "ilisi": {
+              "dataset_id": {
+                "lisi": 2.5950570106506348,
+                "lisi_normalized": 0.17722855508327484,
+                "num_classes": 10,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "assay": {
+                "lisi": 1.0009273290634155,
+                "lisi_normalized": 0.0009273290634155273,
+                "num_classes": 2,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "kbet": {
+              "dataset_id": {
+                "acceptance_rate": 0.0003,
+                "rejection_rate": 0.9997,
+                "num_classes": 10,
+                "num_cells": 10000,
+                "k": 40
+              },
+              "assay": {
+                "acceptance_rate": 0.0005,
+                "rejection_rate": 0.9995,
+                "num_classes": 2,
+                "num_cells": 10000,
+                "k": 40
+              }
+            }
+          },
+          "biology_conservation": {
+            "probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.994731031714171,
+                "balanced_accuracy": 0.9097543667955785,
+                "macro_f1": 0.882195601889833,
+                "majority_baseline": 0.5559514251304697,
+                "uniform_chance": 0.25,
+                "num_classes": 4,
+                "num_train_cells": 3089,
+                "num_test_cells": 19928
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.7515971628351527,
+                "balanced_accuracy": 0.5235600829686137,
+                "macro_f1": 0.5379353503557468,
+                "majority_baseline": 0.39096534030886865,
+                "uniform_chance": 0.041666666666666664,
+                "num_classes": 24,
+                "num_train_cells": 9447,
+                "num_test_cells": 19879
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.9986,
+                "balanced_accuracy": 0.9984599334112756,
+                "macro_f1": 0.9985824077367162,
+                "majority_baseline": 0.55515,
+                "uniform_chance": 0.5,
+                "num_classes": 2,
+                "num_train_cells": 2048,
+                "num_test_cells": 20000
+              },
+              "disease": null
+            },
+            "atlas_transfer_probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.9806600115089195,
+                "balanced_accuracy": 0.6554737476120185,
+                "macro_f1": 0.672969434441786,
+                "majority_baseline": 0.3884010107833571,
+                "uniform_chance": 0.125,
+                "num_classes": 8,
+                "num_train_cells": 4297,
+                "num_test_cells": 39969
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.6723281436461022,
+                "balanced_accuracy": 0.46563242199950766,
+                "macro_f1": 0.3292614355870156,
+                "majority_baseline": 0.43082729719978907,
+                "uniform_chance": 0.02631578947368421,
+                "num_classes": 38,
+                "num_train_cells": 14383,
+                "num_test_cells": 36033
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.866425,
+                "balanced_accuracy": 0.8790429592527642,
+                "macro_f1": 0.6210229308242375,
+                "majority_baseline": 0.443925,
+                "uniform_chance": 0.3333333333333333,
+                "num_classes": 3,
+                "num_train_cells": 3072,
+                "num_test_cells": 40000
+              },
+              "disease": null
+            },
+            "clisi": {
+              "coarse_cell_type": {
+                "lisi": 1.037421464920044,
+                "lisi_normalized": 0.006236910820007324,
+                "num_classes": 7,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "cell_type": {
+                "lisi": 3.3457789421081543,
+                "lisi_normalized": 0.06173102557659149,
+                "num_classes": 39,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "cross_dataset_transfer": {
+              "mean_accuracy": 0.9685368135785485,
+              "mean_balanced_accuracy": 0.872659620843345,
+              "mean_macro_f1": 0.7874919155299955,
+              "mean_majority_baseline": 0.05437537376075123,
+              "num_folds": 5,
+              "num_groups": 10,
+              "folds": [
+                {
+                  "model": "linear",
+                  "accuracy": 0.98980044345898,
+                  "balanced_accuracy": 0.8720269926152279,
+                  "macro_f1": 0.9172486240621476,
+                  "majority_baseline": 0.024390243902439025,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 3242,
+                  "num_test_cells": 2255,
+                  "held_out_groups": [
+                    "8039c63d-08b0-4fc9-af0f-5b57f08ca0da",
+                    "dd03ce70-3243-4c96-9561-330cc461e4d7"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.8732920991019324,
+                  "balanced_accuracy": 0.9663641877580844,
+                  "macro_f1": 0.43043575684779184,
+                  "majority_baseline": 0.21833176084145786,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 2265,
+                  "num_test_cells": 28617,
+                  "held_out_groups": [
+                    "f32c2c13-bb1a-4ffd-a457-60b64ecfa4cb",
+                    "3faad104-2ab8-4434-816d-474d8d2641db"
+                  ],
+                  "unseen_label_fraction": 0.005905443429325752
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.996824480369515,
+                  "balanced_accuracy": 0.8114486950748931,
+                  "macro_f1": 0.8721577228515949,
+                  "majority_baseline": 0.006928406466512702,
+                  "uniform_chance": 0.14285714285714285,
+                  "num_classes": 7,
+                  "num_train_cells": 3324,
+                  "num_test_cells": 3464,
+                  "held_out_groups": [
+                    "db1d2c1b-2ee1-45d5-9d53-69a327cd77e6",
+                    "fa554686-fc07-44dd-b2de-b726d82d26ec"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.9958762886597938,
+                  "balanced_accuracy": 0.9079665775625829,
+                  "macro_f1": 0.9420216489662957,
+                  "majority_baseline": 0.0111340206185567,
+                  "uniform_chance": 0.14285714285714285,
+                  "num_classes": 7,
+                  "num_train_cells": 3319,
+                  "num_test_cells": 2425,
+                  "held_out_groups": [
+                    "c7856243-c59a-4b70-8ce7-25b94c2d9da1",
+                    "ff7d15fa-f4b6-4a0e-992e-fd0c9d088ded"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.986890756302521,
+                  "balanced_accuracy": 0.8054916512059369,
+                  "macro_f1": 0.7755958249221475,
+                  "majority_baseline": 0.011092436974789916,
+                  "uniform_chance": 0.14285714285714285,
+                  "num_classes": 7,
+                  "num_train_cells": 3320,
+                  "num_test_cells": 2975,
+                  "held_out_groups": [
+                    "4d43082e-59cd-43ac-b77d-54d55519c881",
+                    "1cf24082-59de-4029-ac81-6e398768af3a"
+                  ],
+                  "unseen_label_fraction": 0.0
+                }
+              ]
+            }
+          },
+          "summary": {
+            "dataset_leakage_ratio": 0.469596493199955,
+            "assay_leakage_ratio": 0.9968528717545241,
+            "donor_leakage_ratio": 0.31413323518586683,
+            "coarse_cell_type_readout_ratio": 0.9881342524579048,
+            "cross_dataset_cell_type_balanced_accuracy": 0.872659620843345,
+            "dataset_ilisi_normalized": 0.17722855508327484,
+            "coarse_cell_type_clisi_normalized": 0.006236910820007324
+          }
+        },
+        "latent": {
+          "batch_leakage": {
+            "probes": {
+              "dataset_id": {
+                "model": "linear",
+                "accuracy": 0.85145,
+                "balanced_accuracy": 0.6796069772889772,
+                "macro_f1": 0.6622832081292075,
+                "majority_baseline": 0.55515,
+                "uniform_chance": 0.1,
+                "num_classes": 10,
+                "num_train_cells": 7707,
+                "num_test_cells": 20000
+              },
+              "assay": {
+                "model": "linear",
+                "accuracy": 0.9997,
+                "balanced_accuracy": 0.9996628076879848,
+                "macro_f1": 0.99969628484691,
+                "majority_baseline": 0.55515,
+                "uniform_chance": 0.5,
+                "num_classes": 2,
+                "num_train_cells": 2048,
+                "num_test_cells": 20000
+              },
+              "donor_id": {
+                "model": "linear",
+                "accuracy": 0.8413354175971416,
+                "balanced_accuracy": 0.8157637561906611,
+                "macro_f1": 0.8071534412097331,
+                "majority_baseline": 0.39325591782045555,
+                "uniform_chance": 0.16666666666666666,
+                "num_classes": 6,
+                "num_train_cells": 4168,
+                "num_test_cells": 8956
+              }
+            },
+            "ilisi": {
+              "dataset_id": {
+                "lisi": 2.0814473628997803,
+                "lisi_normalized": 0.12016081809997559,
+                "num_classes": 10,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "assay": {
+                "lisi": 1.0036293268203735,
+                "lisi_normalized": 0.003629326820373535,
+                "num_classes": 2,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "kbet": {
+              "dataset_id": {
+                "acceptance_rate": 0.0003,
+                "rejection_rate": 0.9997,
+                "num_classes": 10,
+                "num_cells": 10000,
+                "k": 40
+              },
+              "assay": {
+                "acceptance_rate": 0.0016,
+                "rejection_rate": 0.9984,
+                "num_classes": 2,
+                "num_cells": 10000,
+                "k": 40
+              }
+            }
+          },
+          "biology_conservation": {
+            "probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.9981934965877157,
+                "balanced_accuracy": 0.9380520488369093,
+                "macro_f1": 0.9388474054622301,
+                "majority_baseline": 0.5559514251304697,
+                "uniform_chance": 0.25,
+                "num_classes": 4,
+                "num_train_cells": 3089,
+                "num_test_cells": 19928
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.8777604507268977,
+                "balanced_accuracy": 0.6917327862605318,
+                "macro_f1": 0.7039097928826608,
+                "majority_baseline": 0.39096534030886865,
+                "uniform_chance": 0.041666666666666664,
+                "num_classes": 24,
+                "num_train_cells": 9447,
+                "num_test_cells": 19879
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.9997,
+                "balanced_accuracy": 0.9996628076879848,
+                "macro_f1": 0.99969628484691,
+                "majority_baseline": 0.55515,
+                "uniform_chance": 0.5,
+                "num_classes": 2,
+                "num_train_cells": 2048,
+                "num_test_cells": 20000
+              },
+              "disease": null
+            },
+            "atlas_transfer_probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.9949711026045185,
+                "balanced_accuracy": 0.7393295768475381,
+                "macro_f1": 0.660465048267836,
+                "majority_baseline": 0.3884010107833571,
+                "uniform_chance": 0.125,
+                "num_classes": 8,
+                "num_train_cells": 4297,
+                "num_test_cells": 39969
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.7124580245885715,
+                "balanced_accuracy": 0.5567742192820199,
+                "macro_f1": 0.3905428639658675,
+                "majority_baseline": 0.43082729719978907,
+                "uniform_chance": 0.02631578947368421,
+                "num_classes": 38,
+                "num_train_cells": 14383,
+                "num_test_cells": 36033
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.9109,
+                "balanced_accuracy": 0.9187207274933366,
+                "macro_f1": 0.6347240125869416,
+                "majority_baseline": 0.443925,
+                "uniform_chance": 0.3333333333333333,
+                "num_classes": 3,
+                "num_train_cells": 3072,
+                "num_test_cells": 40000
+              },
+              "disease": null
+            },
+            "clisi": {
+              "coarse_cell_type": {
+                "lisi": 1.0083093643188477,
+                "lisi_normalized": 0.0013848940143361688,
+                "num_classes": 7,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "cell_type": {
+                "lisi": 1.593641757965088,
+                "lisi_normalized": 0.015622151084244251,
+                "num_classes": 39,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "cross_dataset_transfer": {
+              "mean_accuracy": 0.845065078932605,
+              "mean_balanced_accuracy": 0.945830139079278,
+              "mean_macro_f1": 0.8505015116710275,
+              "mean_majority_baseline": 0.05437537376075123,
+              "num_folds": 5,
+              "num_groups": 10,
+              "folds": [
+                {
+                  "model": "linear",
+                  "accuracy": 0.9973392461197339,
+                  "balanced_accuracy": 0.9694298756798757,
+                  "macro_f1": 0.9829462631737339,
+                  "majority_baseline": 0.024390243902439025,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 3242,
+                  "num_test_cells": 2255,
+                  "held_out_groups": [
+                    "8039c63d-08b0-4fc9-af0f-5b57f08ca0da",
+                    "dd03ce70-3243-4c96-9561-330cc461e4d7"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.23010797777544817,
+                  "balanced_accuracy": 0.8001306855121181,
+                  "macro_f1": 0.4570912079236399,
+                  "majority_baseline": 0.21833176084145786,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 2265,
+                  "num_test_cells": 28617,
+                  "held_out_groups": [
+                    "f32c2c13-bb1a-4ffd-a457-60b64ecfa4cb",
+                    "3faad104-2ab8-4434-816d-474d8d2641db"
+                  ],
+                  "unseen_label_fraction": 0.005905443429325752
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.9997113163972287,
+                  "balanced_accuracy": 0.9999201277955272,
+                  "macro_f1": 0.9995548711314378,
+                  "majority_baseline": 0.006928406466512702,
+                  "uniform_chance": 0.14285714285714285,
+                  "num_classes": 7,
+                  "num_train_cells": 3324,
+                  "num_test_cells": 3464,
+                  "held_out_groups": [
+                    "db1d2c1b-2ee1-45d5-9d53-69a327cd77e6",
+                    "fa554686-fc07-44dd-b2de-b726d82d26ec"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.9991752577319588,
+                  "balanced_accuracy": 0.9998184294144348,
+                  "macro_f1": 0.9988509724204547,
+                  "majority_baseline": 0.0111340206185567,
+                  "uniform_chance": 0.14285714285714285,
+                  "num_classes": 7,
+                  "num_train_cells": 3319,
+                  "num_test_cells": 2425,
+                  "held_out_groups": [
+                    "c7856243-c59a-4b70-8ce7-25b94c2d9da1",
+                    "ff7d15fa-f4b6-4a0e-992e-fd0c9d088ded"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.9989915966386554,
+                  "balanced_accuracy": 0.9598515769944342,
+                  "macro_f1": 0.8140642437058716,
+                  "majority_baseline": 0.011092436974789916,
+                  "uniform_chance": 0.14285714285714285,
+                  "num_classes": 7,
+                  "num_train_cells": 3320,
+                  "num_test_cells": 2975,
+                  "held_out_groups": [
+                    "4d43082e-59cd-43ac-b77d-54d55519c881",
+                    "1cf24082-59de-4029-ac81-6e398768af3a"
+                  ],
+                  "unseen_label_fraction": 0.0
+                }
+              ]
+            }
+          },
+          "summary": {
+            "dataset_leakage_ratio": 0.6660672136675284,
+            "assay_leakage_ratio": 0.9993256153759695,
+            "donor_leakage_ratio": 0.7384983437615017,
+            "coarse_cell_type_readout_ratio": 0.9959317436998529,
+            "cross_dataset_cell_type_balanced_accuracy": 0.945830139079278,
+            "dataset_ilisi_normalized": 0.12016081809997559,
+            "coarse_cell_type_clisi_normalized": 0.0013848940143361688
+          }
+        }
+      },
+      "verdict": {
+        "thresholds": {
+          "max_relative_dataset_leakage": 0.5,
+          "min_relative_biology_retention": 0.9,
+          "min_technical_branch_dataset_leakage": 0.8,
+          "max_technical_branch_biology_leakage": 0.2
+        },
+        "reference_representation": "input_expression",
+        "views": {
+          "latent": {
+            "relative_dataset_leakage": 1.418382000957396,
+            "batch_leakage_reduced": false,
+            "relative_biology_retention": 1.0838477185013105,
+            "biology_preserved": true,
+            "disentangled": false
+          }
+        }
+      }
+    },
+    "atlas_matched_biology_v2_matched_ood": {
+      "splits": [
+        "train",
+        "val",
+        "test"
+      ],
+      "num_cells": 40000,
+      "num_datasets": 8,
+      "representations": {
+        "input_expression": {
+          "batch_leakage": {
+            "probes": {
+              "dataset_id": {
+                "model": "linear",
+                "accuracy": 0.4901,
+                "balanced_accuracy": 0.49112622007546103,
+                "macro_f1": 0.441786536260589,
+                "majority_baseline": 0.41305,
+                "uniform_chance": 0.125,
+                "num_classes": 8,
+                "num_train_cells": 8113,
+                "num_test_cells": 20000
+              },
+              "assay": null,
+              "donor_id": {
+                "model": "linear",
+                "accuracy": 0.58075,
+                "balanced_accuracy": 0.5911024319327383,
+                "macro_f1": 0.5702845588464132,
+                "majority_baseline": 0.41955,
+                "uniform_chance": 0.25,
+                "num_classes": 4,
+                "num_train_cells": 4096,
+                "num_test_cells": 20000
+              }
+            },
+            "ilisi": {
+              "dataset_id": {
+                "lisi": 4.077991962432861,
+                "lisi_normalized": 0.43971315026283264,
+                "num_classes": 8,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "assay": null
+            },
+            "kbet": {
+              "dataset_id": {
+                "acceptance_rate": 0.0667,
+                "rejection_rate": 0.9333,
+                "num_classes": 8,
+                "num_cells": 10000,
+                "k": 40
+              },
+              "assay": null
+            }
+          },
+          "biology_conservation": {
+            "probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.9967498374918746,
+                "balanced_accuracy": 0.9436717415597113,
+                "macro_f1": 0.9636665934261389,
+                "majority_baseline": 0.8666433321666084,
+                "uniform_chance": 0.2,
+                "num_classes": 5,
+                "num_train_cells": 2358,
+                "num_test_cells": 19999
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.9981455493183641,
+                "balanced_accuracy": 0.9961291332243332,
+                "macro_f1": 0.9944422419494762,
+                "majority_baseline": 0.8686848436246993,
+                "uniform_chance": 0.16666666666666666,
+                "num_classes": 6,
+                "num_train_cells": 3746,
+                "num_test_cells": 19952
+              },
+              "tissue": null,
+              "disease": null
+            },
+            "atlas_transfer_probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.995475,
+                "balanced_accuracy": 0.7159080568449707,
+                "macro_f1": 0.6398971192067021,
+                "majority_baseline": 0.86405,
+                "uniform_chance": 0.125,
+                "num_classes": 8,
+                "num_train_cells": 4297,
+                "num_test_cells": 40000
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.9972433841218925,
+                "balanced_accuracy": 0.981793186507394,
+                "macro_f1": 0.5888550387920899,
+                "majority_baseline": 0.8661287089013633,
+                "uniform_chance": 0.02631578947368421,
+                "num_classes": 38,
+                "num_train_cells": 14383,
+                "num_test_cells": 39904
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.99015,
+                "balanced_accuracy": 0.99015,
+                "macro_f1": 0.3316835414415999,
+                "majority_baseline": 1.0,
+                "uniform_chance": 0.3333333333333333,
+                "num_classes": 3,
+                "num_train_cells": 3072,
+                "num_test_cells": 40000
+              },
+              "disease": null
+            },
+            "clisi": {
+              "coarse_cell_type": {
+                "lisi": 1.0380768775939941,
+                "lisi_normalized": 0.007615375332534313,
+                "num_classes": 6,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "cell_type": {
+                "lisi": 1.0387310981750488,
+                "lisi_normalized": 0.003873109817504883,
+                "num_classes": 11,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "cross_dataset_transfer": {
+              "mean_accuracy": 0.994892471584952,
+              "mean_balanced_accuracy": 0.9613891852063186,
+              "mean_macro_f1": 0.9683669432421567,
+              "mean_majority_baseline": 0.8475045344685853,
+              "num_folds": 5,
+              "num_groups": 8,
+              "folds": [
+                {
+                  "model": "linear",
+                  "accuracy": 0.9973856209150327,
+                  "balanced_accuracy": 0.9486952122756926,
+                  "macro_f1": 0.9655759544673964,
+                  "majority_baseline": 0.9147058823529411,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 2570,
+                  "num_test_cells": 6120,
+                  "held_out_groups": [
+                    "c7856243-c59a-4b70-8ce7-25b94c2d9da1",
+                    "fa554686-fc07-44dd-b2de-b726d82d26ec"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.9982309582309582,
+                  "balanced_accuracy": 0.9736808117709203,
+                  "macro_f1": 0.9788984255658357,
+                  "majority_baseline": 0.9374447174447175,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 2513,
+                  "num_test_cells": 20350,
+                  "held_out_groups": [
+                    "f32c2c13-bb1a-4ffd-a457-60b64ecfa4cb",
+                    "ff7d15fa-f4b6-4a0e-992e-fd0c9d088ded"
+                  ],
+                  "unseen_label_fraction": 4.913763451430686e-05
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.9951734539969834,
+                  "balanced_accuracy": 0.9880791026750315,
+                  "macro_f1": 0.9922311260367828,
+                  "majority_baseline": 0.5631975867269985,
+                  "uniform_chance": 0.3333333333333333,
+                  "num_classes": 3,
+                  "num_train_cells": 2252,
+                  "num_test_cells": 6630,
+                  "held_out_groups": [
+                    "8039c63d-08b0-4fc9-af0f-5b57f08ca0da",
+                    "1cf24082-59de-4029-ac81-6e398768af3a"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.9987929993964997,
+                  "balanced_accuracy": 0.9997340425531915,
+                  "macro_f1": 0.9983402152438126,
+                  "majority_baseline": 0.9076644538322269,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 2570,
+                  "num_test_cells": 3314,
+                  "held_out_groups": [
+                    "dd03ce70-3243-4c96-9561-330cc461e4d7"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.9848793253852864,
+                  "balanced_accuracy": 0.8967567567567567,
+                  "macro_f1": 0.9067889948969567,
+                  "majority_baseline": 0.9145100319860424,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 2572,
+                  "num_test_cells": 3439,
+                  "held_out_groups": [
+                    "4d43082e-59cd-43ac-b77d-54d55519c881"
+                  ],
+                  "unseen_label_fraction": 0.0
+                }
+              ]
+            }
+          },
+          "summary": {
+            "dataset_leakage_ratio": 0.13127182894624753,
+            "assay_leakage_ratio": null,
+            "donor_leakage_ratio": 0.2777155655095185,
+            "coarse_cell_type_readout_ratio": 0.9756280464941884,
+            "cross_dataset_cell_type_balanced_accuracy": 0.9613891852063186,
+            "dataset_ilisi_normalized": 0.43971315026283264,
+            "coarse_cell_type_clisi_normalized": 0.007615375332534313
+          }
+        },
+        "latent": {
+          "batch_leakage": {
+            "probes": {
+              "dataset_id": {
+                "model": "linear",
+                "accuracy": 0.6734,
+                "balanced_accuracy": 0.6679411124295249,
+                "macro_f1": 0.6278670073091729,
+                "majority_baseline": 0.41305,
+                "uniform_chance": 0.125,
+                "num_classes": 8,
+                "num_train_cells": 8113,
+                "num_test_cells": 20000
+              },
+              "assay": null,
+              "donor_id": {
+                "model": "linear",
+                "accuracy": 0.8287,
+                "balanced_accuracy": 0.8471801176394524,
+                "macro_f1": 0.8292102671321331,
+                "majority_baseline": 0.41955,
+                "uniform_chance": 0.25,
+                "num_classes": 4,
+                "num_train_cells": 4096,
+                "num_test_cells": 20000
+              }
+            },
+            "ilisi": {
+              "dataset_id": {
+                "lisi": 2.6790504455566406,
+                "lisi_normalized": 0.23986434936523438,
+                "num_classes": 8,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "assay": null
+            },
+            "kbet": {
+              "dataset_id": {
+                "acceptance_rate": 0.0952,
+                "rejection_rate": 0.9048,
+                "num_classes": 8,
+                "num_cells": 10000,
+                "k": 40
+              },
+              "assay": null
+            }
+          },
+          "biology_conservation": {
+            "probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.9993499674983749,
+                "balanced_accuracy": 0.9890622563482013,
+                "macro_f1": 0.986122125466825,
+                "majority_baseline": 0.8666433321666084,
+                "uniform_chance": 0.2,
+                "num_classes": 5,
+                "num_train_cells": 2358,
+                "num_test_cells": 19999
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.9993985565356857,
+                "balanced_accuracy": 0.9988245150662212,
+                "macro_f1": 0.9976842972788905,
+                "majority_baseline": 0.8686848436246993,
+                "uniform_chance": 0.16666666666666666,
+                "num_classes": 6,
+                "num_train_cells": 3746,
+                "num_test_cells": 19952
+              },
+              "tissue": null,
+              "disease": null
+            },
+            "atlas_transfer_probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.998875,
+                "balanced_accuracy": 0.8289378915211595,
+                "macro_f1": 0.6978908176362282,
+                "majority_baseline": 0.86405,
+                "uniform_chance": 0.125,
+                "num_classes": 8,
+                "num_train_cells": 4297,
+                "num_test_cells": 40000
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.9980954290296712,
+                "balanced_accuracy": 0.9938197589994279,
+                "macro_f1": 0.537195372311886,
+                "majority_baseline": 0.8661287089013633,
+                "uniform_chance": 0.02631578947368421,
+                "num_classes": 38,
+                "num_train_cells": 14383,
+                "num_test_cells": 39904
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.987775,
+                "balanced_accuracy": 0.987775,
+                "macro_f1": 0.3312833025199868,
+                "majority_baseline": 1.0,
+                "uniform_chance": 0.3333333333333333,
+                "num_classes": 3,
+                "num_train_cells": 3072,
+                "num_test_cells": 40000
+              },
+              "disease": null
+            },
+            "clisi": {
+              "coarse_cell_type": {
+                "lisi": 1.0061031579971313,
+                "lisi_normalized": 0.0012206316459923983,
+                "num_classes": 6,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "cell_type": {
+                "lisi": 1.0079927444458008,
+                "lisi_normalized": 0.0007992744212970138,
+                "num_classes": 11,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "cross_dataset_transfer": {
+              "mean_accuracy": 0.9990357295732206,
+              "mean_balanced_accuracy": 0.9773037875685455,
+              "mean_macro_f1": 0.9679027456229452,
+              "mean_majority_baseline": 0.8475045344685853,
+              "num_folds": 5,
+              "num_groups": 8,
+              "folds": [
+                {
+                  "model": "linear",
+                  "accuracy": 0.9996732026143791,
+                  "balanced_accuracy": 0.9999285459092533,
+                  "macro_f1": 0.997285267180241,
+                  "majority_baseline": 0.9147058823529411,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 2570,
+                  "num_test_cells": 6120,
+                  "held_out_groups": [
+                    "c7856243-c59a-4b70-8ce7-25b94c2d9da1",
+                    "fa554686-fc07-44dd-b2de-b726d82d26ec"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.9991154791154792,
+                  "balanced_accuracy": 0.9873217749121979,
+                  "macro_f1": 0.9908535227338264,
+                  "majority_baseline": 0.9374447174447175,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 2513,
+                  "num_test_cells": 20350,
+                  "held_out_groups": [
+                    "f32c2c13-bb1a-4ffd-a457-60b64ecfa4cb",
+                    "ff7d15fa-f4b6-4a0e-992e-fd0c9d088ded"
+                  ],
+                  "unseen_label_fraction": 4.913763451430686e-05
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 1.0,
+                  "balanced_accuracy": 1.0,
+                  "macro_f1": 1.0,
+                  "majority_baseline": 0.5631975867269985,
+                  "uniform_chance": 0.3333333333333333,
+                  "num_classes": 3,
+                  "num_train_cells": 2252,
+                  "num_test_cells": 6630,
+                  "held_out_groups": [
+                    "8039c63d-08b0-4fc9-af0f-5b57f08ca0da",
+                    "1cf24082-59de-4029-ac81-6e398768af3a"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.9966807483403741,
+                  "balanced_accuracy": 0.9992686170212766,
+                  "macro_f1": 0.9204512434215417,
+                  "majority_baseline": 0.9076644538322269,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 2570,
+                  "num_test_cells": 3314,
+                  "held_out_groups": [
+                    "dd03ce70-3243-4c96-9561-330cc461e4d7"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.9997092177958709,
+                  "balanced_accuracy": 0.9,
+                  "macro_f1": 0.9309236947791165,
+                  "majority_baseline": 0.9145100319860424,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 2572,
+                  "num_test_cells": 3439,
+                  "held_out_groups": [
+                    "4d43082e-59cd-43ac-b77d-54d55519c881"
+                  ],
+                  "unseen_label_fraction": 0.0
+                }
+              ]
+            }
+          },
+          "summary": {
+            "dataset_leakage_ratio": 0.44356418775023426,
+            "assay_leakage_ratio": null,
+            "donor_leakage_ratio": 0.7048841416142648,
+            "coarse_cell_type_readout_ratio": 0.9951256092988375,
+            "cross_dataset_cell_type_balanced_accuracy": 0.9773037875685455,
+            "dataset_ilisi_normalized": 0.23986434936523438,
+            "coarse_cell_type_clisi_normalized": 0.0012206316459923983
+          }
+        }
+      },
+      "verdict": {
+        "thresholds": {
+          "max_relative_dataset_leakage": 0.5,
+          "min_relative_biology_retention": 0.9,
+          "min_technical_branch_dataset_leakage": 0.8,
+          "max_technical_branch_biology_leakage": 0.2
+        },
+        "reference_representation": "input_expression",
+        "views": {
+          "latent": {
+            "relative_dataset_leakage": 3.3789746917585988,
+            "batch_leakage_reduced": false,
+            "relative_biology_retention": 1.0165537563841136,
+            "biology_preserved": true,
+            "disentangled": false
+          }
+        }
+      }
+    },
+    "atlas_ood_unseen_protocol_2608": {
+      "splits": [
+        "train",
+        "val",
+        "test"
+      ],
+      "num_cells": 40000,
+      "num_datasets": 12,
+      "representations": {
+        "input_expression": {
+          "batch_leakage": {
+            "probes": {
+              "dataset_id": {
+                "model": "linear",
+                "accuracy": 0.8620689655172413,
+                "balanced_accuracy": 0.8489999877655122,
+                "macro_f1": 0.7927984222625166,
+                "majority_baseline": 0.5261498423502328,
+                "uniform_chance": 0.09090909090909091,
+                "num_classes": 11,
+                "num_train_cells": 5726,
+                "num_test_cells": 19981
+              },
+              "assay": {
+                "model": "linear",
+                "accuracy": 0.7714700871830845,
+                "balanced_accuracy": 0.7974808110274507,
+                "macro_f1": 0.7535431410776295,
+                "majority_baseline": 0.37343421184487424,
+                "uniform_chance": 0.08333333333333333,
+                "num_classes": 12,
+                "num_train_cells": 6195,
+                "num_test_cells": 19958
+              },
+              "donor_id": {
+                "model": "linear",
+                "accuracy": 0.488870617254948,
+                "balanced_accuracy": 0.40072290005441524,
+                "macro_f1": 0.4137185931848315,
+                "majority_baseline": 0.0322429083220767,
+                "uniform_chance": 0.005405405405405406,
+                "num_classes": 185,
+                "num_train_cells": 17310,
+                "num_test_cells": 17027
+              }
+            },
+            "ilisi": {
+              "dataset_id": {
+                "lisi": 1.7188873291015625,
+                "lisi_normalized": 0.0653533935546875,
+                "num_classes": 12,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "assay": {
+                "lisi": 2.0885188579559326,
+                "lisi_normalized": 0.09070990234613419,
+                "num_classes": 13,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "kbet": {
+              "dataset_id": {
+                "acceptance_rate": 0.0662,
+                "rejection_rate": 0.9338,
+                "num_classes": 12,
+                "num_cells": 10000,
+                "k": 40
+              },
+              "assay": {
+                "acceptance_rate": 0.0465,
+                "rejection_rate": 0.9535,
+                "num_classes": 13,
+                "num_cells": 10000,
+                "k": 40
+              }
+            }
+          },
+          "biology_conservation": {
+            "probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.6378268596090378,
+                "balanced_accuracy": 0.6486559228375648,
+                "macro_f1": 0.5889581827092283,
+                "majority_baseline": 0.5572988068037573,
+                "uniform_chance": 0.125,
+                "num_classes": 8,
+                "num_train_cells": 6810,
+                "num_test_cells": 19695
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.6680917622523462,
+                "balanced_accuracy": 0.4660270141209437,
+                "macro_f1": 0.5023049559757833,
+                "majority_baseline": 0.19973931178310741,
+                "uniform_chance": 0.01818181818181818,
+                "num_classes": 55,
+                "num_train_cells": 13697,
+                "num_test_cells": 19180
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.4290097067846904,
+                "balanced_accuracy": 0.3070136548828246,
+                "macro_f1": 0.3328191831679141,
+                "majority_baseline": 0.22340693054368052,
+                "uniform_chance": 0.015151515151515152,
+                "num_classes": 66,
+                "num_train_cells": 16343,
+                "num_test_cells": 19883
+              },
+              "disease": {
+                "model": "linear",
+                "accuracy": 0.8514603476779721,
+                "balanced_accuracy": 0.8411271155136314,
+                "macro_f1": 0.7369081370685402,
+                "majority_baseline": 0.5266770201893692,
+                "uniform_chance": 0.25,
+                "num_classes": 4,
+                "num_train_cells": 2922,
+                "num_test_cells": 19961
+              }
+            },
+            "atlas_transfer_probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.5474867422800741,
+                "balanced_accuracy": 0.31145361705337,
+                "macro_f1": 0.32909570432731783,
+                "majority_baseline": 0.05518763796909492,
+                "uniform_chance": 0.125,
+                "num_classes": 8,
+                "num_train_cells": 4297,
+                "num_test_cells": 39411
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.3953717380600689,
+                "balanced_accuracy": 0.3177590101208233,
+                "macro_f1": 0.1773100330629445,
+                "majority_baseline": 0.06335138683735433,
+                "uniform_chance": 0.02631578947368421,
+                "num_classes": 38,
+                "num_train_cells": 14383,
+                "num_test_cells": 6093
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.7285208148804252,
+                "balanced_accuracy": 0.7750644526612165,
+                "macro_f1": 0.4877698505135964,
+                "majority_baseline": 0.0,
+                "uniform_chance": 0.3333333333333333,
+                "num_classes": 3,
+                "num_train_cells": 3072,
+                "num_test_cells": 2258
+              },
+              "disease": null
+            },
+            "clisi": {
+              "coarse_cell_type": {
+                "lisi": 2.158207893371582,
+                "lisi_normalized": 0.16545827686786652,
+                "num_classes": 8,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "cell_type": {
+                "lisi": 4.693805694580078,
+                "lisi_normalized": 0.02512793056666851,
+                "num_classes": 148,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "cross_dataset_transfer": {
+              "mean_accuracy": 0.470426078754351,
+              "mean_balanced_accuracy": 0.41720108564340636,
+              "mean_macro_f1": 0.24793143233313703,
+              "mean_majority_baseline": 0.4066195386248128,
+              "num_folds": 5,
+              "num_groups": 12,
+              "folds": [
+                {
+                  "model": "linear",
+                  "accuracy": 0.36926051232479457,
+                  "balanced_accuracy": 0.5402746664576968,
+                  "macro_f1": 0.22350029290031048,
+                  "majority_baseline": 0.9086515224746254,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 7347,
+                  "num_test_cells": 2069,
+                  "held_out_groups": [
+                    "e04daea4-4412-45b5-989e-76a9be070a89",
+                    "456e8b9b-f872-488b-871d-94534090a865",
+                    "e22482ee-19e8-40bc-9f6e-541dc3c82c20"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.3986799284961269,
+                  "balanced_accuracy": 0.4437032642433363,
+                  "macro_f1": 0.17754804468168467,
+                  "majority_baseline": 0.7358940275931612,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 6607,
+                  "num_test_cells": 21817,
+                  "held_out_groups": [
+                    "56c4912d-2bae-4b64-98f2-af8a84389208",
+                    "c05fb583-eb2f-4e3a-8e74-f9bd6414e418",
+                    "13b61a7d-5605-4948-ba48-02c588960143"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.3839935327405012,
+                  "balanced_accuracy": 0.2941164787270055,
+                  "macro_f1": 0.27027285839483245,
+                  "majority_baseline": 0.30978172999191594,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 5168,
+                  "num_test_cells": 12370,
+                  "held_out_groups": [
+                    "5bc42b88-bb76-4954-927b-8bb7369adc64",
+                    "2adb1f8a-a6b1-4909-8ee8-484814e2d4bf"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.6503362151777138,
+                  "balanced_accuracy": 0.5543401340623293,
+                  "macro_f1": 0.4626161840107641,
+                  "majority_baseline": 0.0787704130643612,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 7265,
+                  "num_test_cells": 2082,
+                  "held_out_groups": [
+                    "90d4a63b-5c02-43eb-acde-c49345681601",
+                    "a5d5c529-8a1f-40b5-bda3-35208970070d"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.5498602050326188,
+                  "balanced_accuracy": 0.2535708847266636,
+                  "macro_f1": 0.10571978167809344,
+                  "majority_baseline": 0.0,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 7420,
+                  "num_test_cells": 1073,
+                  "held_out_groups": [
+                    "82f6af6d-5313-439a-9936-5e844be49a70",
+                    "b07e5164-baf6-43d2-bdba-5a249d0da879"
+                  ],
+                  "unseen_label_fraction": 0.0
+                }
+              ]
+            }
+          },
+          "summary": {
+            "dataset_leakage_ratio": 0.7089142374313475,
+            "assay_leakage_ratio": 0.635265893642543,
+            "donor_leakage_ratio": 0.4718412428692802,
+            "coarse_cell_type_readout_ratio": 0.1819015942195206,
+            "cross_dataset_cell_type_balanced_accuracy": 0.41720108564340636,
+            "dataset_ilisi_normalized": 0.0653533935546875,
+            "coarse_cell_type_clisi_normalized": 0.16545827686786652
+          }
+        },
+        "latent": {
+          "batch_leakage": {
+            "probes": {
+              "dataset_id": {
+                "model": "linear",
+                "accuracy": 0.8968520094089385,
+                "balanced_accuracy": 0.8931434983519394,
+                "macro_f1": 0.8625640593117784,
+                "majority_baseline": 0.5261498423502328,
+                "uniform_chance": 0.09090909090909091,
+                "num_classes": 11,
+                "num_train_cells": 5726,
+                "num_test_cells": 19981
+              },
+              "assay": {
+                "model": "linear",
+                "accuracy": 0.8213748872632528,
+                "balanced_accuracy": 0.8393139943826157,
+                "macro_f1": 0.8267593291095893,
+                "majority_baseline": 0.37343421184487424,
+                "uniform_chance": 0.08333333333333333,
+                "num_classes": 12,
+                "num_train_cells": 6195,
+                "num_test_cells": 19958
+              },
+              "donor_id": {
+                "model": "linear",
+                "accuracy": 0.4551594526340518,
+                "balanced_accuracy": 0.3485048651983531,
+                "macro_f1": 0.3447620440896158,
+                "majority_baseline": 0.0322429083220767,
+                "uniform_chance": 0.005405405405405406,
+                "num_classes": 185,
+                "num_train_cells": 17310,
+                "num_test_cells": 17027
+              }
+            },
+            "ilisi": {
+              "dataset_id": {
+                "lisi": 1.2869576215744019,
+                "lisi_normalized": 0.02608705684542656,
+                "num_classes": 12,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "assay": {
+                "lisi": 1.5513848066329956,
+                "lisi_normalized": 0.045948732644319534,
+                "num_classes": 13,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "kbet": {
+              "dataset_id": {
+                "acceptance_rate": 0.0758,
+                "rejection_rate": 0.9242,
+                "num_classes": 12,
+                "num_cells": 10000,
+                "k": 40
+              },
+              "assay": {
+                "acceptance_rate": 0.0515,
+                "rejection_rate": 0.9485,
+                "num_classes": 13,
+                "num_cells": 10000,
+                "k": 40
+              }
+            }
+          },
+          "biology_conservation": {
+            "probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.7042904290429043,
+                "balanced_accuracy": 0.7344753952892376,
+                "macro_f1": 0.6628699577980464,
+                "majority_baseline": 0.5572988068037573,
+                "uniform_chance": 0.125,
+                "num_classes": 8,
+                "num_train_cells": 6810,
+                "num_test_cells": 19695
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.7170490093847758,
+                "balanced_accuracy": 0.5173833053903087,
+                "macro_f1": 0.5445975078995411,
+                "majority_baseline": 0.19973931178310741,
+                "uniform_chance": 0.01818181818181818,
+                "num_classes": 55,
+                "num_train_cells": 13697,
+                "num_test_cells": 19180
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.4357491324246844,
+                "balanced_accuracy": 0.27453987257888307,
+                "macro_f1": 0.2778128284343895,
+                "majority_baseline": 0.22340693054368052,
+                "uniform_chance": 0.015151515151515152,
+                "num_classes": 66,
+                "num_train_cells": 16343,
+                "num_test_cells": 19883
+              },
+              "disease": {
+                "model": "linear",
+                "accuracy": 0.9007063774360002,
+                "balanced_accuracy": 0.8971187702778842,
+                "macro_f1": 0.8232302132290265,
+                "majority_baseline": 0.5266770201893692,
+                "uniform_chance": 0.25,
+                "num_classes": 4,
+                "num_train_cells": 2922,
+                "num_test_cells": 19961
+              }
+            },
+            "atlas_transfer_probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.4606581918753647,
+                "balanced_accuracy": 0.3345851037769596,
+                "macro_f1": 0.2976228886393743,
+                "majority_baseline": 0.05518763796909492,
+                "uniform_chance": 0.125,
+                "num_classes": 8,
+                "num_train_cells": 4297,
+                "num_test_cells": 39411
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.34876087313310355,
+                "balanced_accuracy": 0.39615311026790134,
+                "macro_f1": 0.1854406606672761,
+                "majority_baseline": 0.06335138683735433,
+                "uniform_chance": 0.02631578947368421,
+                "num_classes": 38,
+                "num_train_cells": 14383,
+                "num_test_cells": 6093
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.7201062887511072,
+                "balanced_accuracy": 0.7231232402727366,
+                "macro_f1": 0.5130350185228673,
+                "majority_baseline": 0.0,
+                "uniform_chance": 0.3333333333333333,
+                "num_classes": 3,
+                "num_train_cells": 3072,
+                "num_test_cells": 2258
+              },
+              "disease": null
+            },
+            "clisi": {
+              "coarse_cell_type": {
+                "lisi": 1.8357913494110107,
+                "lisi_normalized": 0.11939876526594162,
+                "num_classes": 8,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "cell_type": {
+                "lisi": 2.9852969646453857,
+                "lisi_normalized": 0.013505421578884125,
+                "num_classes": 148,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "cross_dataset_transfer": {
+              "mean_accuracy": 0.5754748745733972,
+              "mean_balanced_accuracy": 0.5720344484344416,
+              "mean_macro_f1": 0.3397048728857233,
+              "mean_majority_baseline": 0.4066195386248128,
+              "num_folds": 5,
+              "num_groups": 12,
+              "folds": [
+                {
+                  "model": "linear",
+                  "accuracy": 0.38231029482841955,
+                  "balanced_accuracy": 0.6010737118318935,
+                  "macro_f1": 0.3399957640251239,
+                  "majority_baseline": 0.9086515224746254,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 7347,
+                  "num_test_cells": 2069,
+                  "held_out_groups": [
+                    "e04daea4-4412-45b5-989e-76a9be070a89",
+                    "456e8b9b-f872-488b-871d-94534090a865",
+                    "e22482ee-19e8-40bc-9f6e-541dc3c82c20"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.44181143145253704,
+                  "balanced_accuracy": 0.4916324062447561,
+                  "macro_f1": 0.20764004818380527,
+                  "majority_baseline": 0.7358940275931612,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 6607,
+                  "num_test_cells": 21817,
+                  "held_out_groups": [
+                    "56c4912d-2bae-4b64-98f2-af8a84389208",
+                    "c05fb583-eb2f-4e3a-8e74-f9bd6414e418",
+                    "13b61a7d-5605-4948-ba48-02c588960143"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.3981406628940986,
+                  "balanced_accuracy": 0.3058224057086003,
+                  "macro_f1": 0.27667050357338263,
+                  "majority_baseline": 0.30978172999191594,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 5168,
+                  "num_test_cells": 12370,
+                  "held_out_groups": [
+                    "5bc42b88-bb76-4954-927b-8bb7369adc64",
+                    "2adb1f8a-a6b1-4909-8ee8-484814e2d4bf"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.8573487031700289,
+                  "balanced_accuracy": 0.6661424022826268,
+                  "macro_f1": 0.594826147900524,
+                  "majority_baseline": 0.0787704130643612,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 7265,
+                  "num_test_cells": 2082,
+                  "held_out_groups": [
+                    "90d4a63b-5c02-43eb-acde-c49345681601",
+                    "a5d5c529-8a1f-40b5-bda3-35208970070d"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.7977632805219013,
+                  "balanced_accuracy": 0.7955013161043313,
+                  "macro_f1": 0.27939190074578074,
+                  "majority_baseline": 0.0,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 7420,
+                  "num_test_cells": 1073,
+                  "held_out_groups": [
+                    "82f6af6d-5313-439a-9936-5e844be49a70",
+                    "b07e5164-baf6-43d2-bdba-5a249d0da879"
+                  ],
+                  "unseen_label_fraction": 0.0
+                }
+              ]
+            }
+          },
+          "summary": {
+            "dataset_leakage_ratio": 0.782319391634981,
+            "assay_leakage_ratio": 0.7149140343862455,
+            "donor_leakage_ratio": 0.43700691831532945,
+            "coarse_cell_type_readout_ratio": 0.33203349007913746,
+            "cross_dataset_cell_type_balanced_accuracy": 0.5720344484344416,
+            "dataset_ilisi_normalized": 0.02608705684542656,
+            "coarse_cell_type_clisi_normalized": 0.11939876526594162
+          }
+        }
+      },
+      "verdict": {
+        "thresholds": {
+          "max_relative_dataset_leakage": 0.5,
+          "min_relative_biology_retention": 0.9,
+          "min_technical_branch_dataset_leakage": 0.8,
+          "max_technical_branch_biology_leakage": 0.2
+        },
+        "reference_representation": "input_expression",
+        "views": {
+          "latent": {
+            "relative_dataset_leakage": 1.1035458879618596,
+            "batch_leakage_reduced": false,
+            "relative_biology_retention": 1.3711240649152474,
+            "biology_preserved": true,
+            "disentangled": false
+          }
+        }
+      }
+    },
+    "atlas_ood_unseen_tissue_2608": {
+      "splits": [
+        "train",
+        "val",
+        "test"
+      ],
+      "num_cells": 40000,
+      "num_datasets": 9,
+      "representations": {
+        "input_expression": {
+          "batch_leakage": {
+            "probes": {
+              "dataset_id": {
+                "model": "linear",
+                "accuracy": 0.8155,
+                "balanced_accuracy": 0.7581024434506616,
+                "macro_f1": 0.7272222978790137,
+                "majority_baseline": 0.3106,
+                "uniform_chance": 0.1111111111111111,
+                "num_classes": 9,
+                "num_train_cells": 6109,
+                "num_test_cells": 20000
+              },
+              "assay": {
+                "model": "linear",
+                "accuracy": 0.8532,
+                "balanced_accuracy": 0.8459646298726115,
+                "macro_f1": 0.7016460497129376,
+                "majority_baseline": 0.61845,
+                "uniform_chance": 0.25,
+                "num_classes": 4,
+                "num_train_cells": 3510,
+                "num_test_cells": 20000
+              },
+              "donor_id": {
+                "model": "linear",
+                "accuracy": 0.3821986888552698,
+                "balanced_accuracy": 0.23531779525488353,
+                "macro_f1": 0.2418929922895171,
+                "majority_baseline": 0.06933938477054967,
+                "uniform_chance": 0.010752688172043012,
+                "num_classes": 93,
+                "num_train_cells": 19126,
+                "num_test_cells": 19830
+              }
+            },
+            "ilisi": {
+              "dataset_id": {
+                "lisi": 1.8875830173492432,
+                "lisi_normalized": 0.1109478771686554,
+                "num_classes": 9,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "assay": {
+                "lisi": 1.5244269371032715,
+                "lisi_normalized": 0.17480897903442383,
+                "num_classes": 4,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "kbet": {
+              "dataset_id": {
+                "acceptance_rate": 0.0179,
+                "rejection_rate": 0.9821,
+                "num_classes": 9,
+                "num_cells": 10000,
+                "k": 40
+              },
+              "assay": {
+                "acceptance_rate": 0.0622,
+                "rejection_rate": 0.9378,
+                "num_classes": 4,
+                "num_cells": 10000,
+                "k": 40
+              }
+            }
+          },
+          "biology_conservation": {
+            "probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.8124619556195009,
+                "balanced_accuracy": 0.8123036415652312,
+                "macro_f1": 0.7600581070723527,
+                "majority_baseline": 0.4209506944828731,
+                "uniform_chance": 0.2,
+                "num_classes": 5,
+                "num_train_cells": 5109,
+                "num_test_cells": 18071
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.6765299939406181,
+                "balanced_accuracy": 0.5630631070264254,
+                "macro_f1": 0.5765363435926842,
+                "majority_baseline": 0.15365582710563522,
+                "uniform_chance": 0.02702702702702703,
+                "num_classes": 37,
+                "num_train_cells": 15317,
+                "num_test_cells": 19804
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.65755,
+                "balanced_accuracy": 0.6774139980414929,
+                "macro_f1": 0.5609119098774956,
+                "majority_baseline": 0.489,
+                "uniform_chance": 0.16666666666666666,
+                "num_classes": 6,
+                "num_train_cells": 5004,
+                "num_test_cells": 20000
+              },
+              "disease": {
+                "model": "linear",
+                "accuracy": 0.632,
+                "balanced_accuracy": 0.657527832190685,
+                "macro_f1": 0.612109321378024,
+                "majority_baseline": 0.34355,
+                "uniform_chance": 0.14285714285714285,
+                "num_classes": 7,
+                "num_train_cells": 4834,
+                "num_test_cells": 20000
+              }
+            },
+            "atlas_transfer_probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.392831382122843,
+                "balanced_accuracy": 0.4067898052562436,
+                "macro_f1": 0.2520707328051849,
+                "majority_baseline": 0.0,
+                "uniform_chance": 0.125,
+                "num_classes": 8,
+                "num_train_cells": 4297,
+                "num_test_cells": 36046
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.39030478192327905,
+                "balanced_accuracy": 0.2544668007598019,
+                "macro_f1": 0.07340022457356819,
+                "majority_baseline": 0.0,
+                "uniform_chance": 0.02631578947368421,
+                "num_classes": 38,
+                "num_train_cells": 14383,
+                "num_test_cells": 7612
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.8025404157043879,
+                "balanced_accuracy": 0.8025404157043879,
+                "macro_f1": 0.29681827888105916,
+                "majority_baseline": 0.0,
+                "uniform_chance": 0.3333333333333333,
+                "num_classes": 3,
+                "num_train_cells": 3072,
+                "num_test_cells": 2598
+              },
+              "disease": null
+            },
+            "clisi": {
+              "coarse_cell_type": {
+                "lisi": 2.009387969970703,
+                "lisi_normalized": 0.20187759399414062,
+                "num_classes": 6,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "cell_type": {
+                "lisi": 5.232990264892578,
+                "lisi_normalized": 0.07696346193552017,
+                "num_classes": 56,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "cross_dataset_transfer": {
+              "mean_accuracy": 0.6863156016661897,
+              "mean_balanced_accuracy": 0.5684999131983892,
+              "mean_macro_f1": 0.5255917545378249,
+              "mean_majority_baseline": 0.23911134034129616,
+              "num_folds": 5,
+              "num_groups": 9,
+              "folds": [
+                {
+                  "model": "linear",
+                  "accuracy": 0.8104054370752285,
+                  "balanced_accuracy": 0.6105184258791281,
+                  "macro_f1": 0.5989182043719594,
+                  "majority_baseline": 0.6990860089055543,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 5120,
+                  "num_test_cells": 4267,
+                  "held_out_groups": [
+                    "e067e5ca-e53e-485f-aa8e-efd5435229c8",
+                    "0b4a15a7-4e9e-4555-9733-2423e5c66469"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.7142516682554814,
+                  "balanced_accuracy": 0.4982107064054572,
+                  "macro_f1": 0.46217533211127054,
+                  "majority_baseline": 0.007149666348903718,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 5120,
+                  "num_test_cells": 12588,
+                  "held_out_groups": [
+                    "bd65a70f-b274-4133-b9dd-0d1431b6af34",
+                    "ea01c125-67a7-4bd3-a8b0-e1b53a011b7e"
+                  ],
+                  "unseen_label_fraction": 0.0007937767899666159
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.5849358974358975,
+                  "balanced_accuracy": 0.6480973039948605,
+                  "macro_f1": 0.5475033819734885,
+                  "majority_baseline": 0.38301282051282054,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 5120,
+                  "num_test_cells": 624,
+                  "held_out_groups": [
+                    "4c6f9f26-5470-455b-8933-c408232fbf56",
+                    "f801b7a9-80a6-4d09-9161-71474deb58ae"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.7862707198500556,
+                  "balanced_accuracy": 0.5344599217323915,
+                  "macro_f1": 0.5529234229850111,
+                  "majority_baseline": 0.10630820593920225,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 4712,
+                  "num_test_cells": 17073,
+                  "held_out_groups": [
+                    "32b9bdce-2481-4c85-ba1b-6ad5fcea844c",
+                    "07854d9c-5375-4a9b-ac34-fa919d3c3686"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.5357142857142857,
+                  "balanced_accuracy": 0.5512132079801084,
+                  "macro_f1": 0.46643843124739537,
+                  "majority_baseline": 0.0,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 5120,
+                  "num_test_cells": 1484,
+                  "held_out_groups": [
+                    "be39785b-67cb-4177-be19-a40ee3747e45"
+                  ],
+                  "unseen_label_fraction": 0.0
+                }
+              ]
+            }
+          },
+          "summary": {
+            "dataset_leakage_ratio": 0.7323759791122716,
+            "assay_leakage_ratio": 0.6152535709605554,
+            "donor_leakage_ratio": 0.33616905987537254,
+            "coarse_cell_type_readout_ratio": 0.6761276758409787,
+            "cross_dataset_cell_type_balanced_accuracy": 0.5684999131983892,
+            "dataset_ilisi_normalized": 0.1109478771686554,
+            "coarse_cell_type_clisi_normalized": 0.20187759399414062
+          }
+        },
+        "latent": {
+          "batch_leakage": {
+            "probes": {
+              "dataset_id": {
+                "model": "linear",
+                "accuracy": 0.8398,
+                "balanced_accuracy": 0.7891347589227561,
+                "macro_f1": 0.7513632325576856,
+                "majority_baseline": 0.3106,
+                "uniform_chance": 0.1111111111111111,
+                "num_classes": 9,
+                "num_train_cells": 6109,
+                "num_test_cells": 20000
+              },
+              "assay": {
+                "model": "linear",
+                "accuracy": 0.8818,
+                "balanced_accuracy": 0.8972057450328986,
+                "macro_f1": 0.7525182871709163,
+                "majority_baseline": 0.61845,
+                "uniform_chance": 0.25,
+                "num_classes": 4,
+                "num_train_cells": 3510,
+                "num_test_cells": 20000
+              },
+              "donor_id": {
+                "model": "linear",
+                "accuracy": 0.4222390317700454,
+                "balanced_accuracy": 0.23890810257530704,
+                "macro_f1": 0.23933273934084312,
+                "majority_baseline": 0.06933938477054967,
+                "uniform_chance": 0.010752688172043012,
+                "num_classes": 93,
+                "num_train_cells": 19126,
+                "num_test_cells": 19830
+              }
+            },
+            "ilisi": {
+              "dataset_id": {
+                "lisi": 1.5818381309509277,
+                "lisi_normalized": 0.07272976636886597,
+                "num_classes": 9,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "assay": {
+                "lisi": 1.2270145416259766,
+                "lisi_normalized": 0.07567151635885239,
+                "num_classes": 4,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "kbet": {
+              "dataset_id": {
+                "acceptance_rate": 0.0021,
+                "rejection_rate": 0.9979,
+                "num_classes": 9,
+                "num_cells": 10000,
+                "k": 40
+              },
+              "assay": {
+                "acceptance_rate": 0.0512,
+                "rejection_rate": 0.9488,
+                "num_classes": 4,
+                "num_cells": 10000,
+                "k": 40
+              }
+            }
+          },
+          "biology_conservation": {
+            "probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.8727795916108683,
+                "balanced_accuracy": 0.8730225162814161,
+                "macro_f1": 0.8337509642828957,
+                "majority_baseline": 0.4209506944828731,
+                "uniform_chance": 0.2,
+                "num_classes": 5,
+                "num_train_cells": 5109,
+                "num_test_cells": 18071
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.7195011108866896,
+                "balanced_accuracy": 0.6130280614525094,
+                "macro_f1": 0.6315420853439156,
+                "majority_baseline": 0.15365582710563522,
+                "uniform_chance": 0.02702702702702703,
+                "num_classes": 37,
+                "num_train_cells": 15317,
+                "num_test_cells": 19804
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.7148,
+                "balanced_accuracy": 0.7365254889410012,
+                "macro_f1": 0.6177816690431885,
+                "majority_baseline": 0.489,
+                "uniform_chance": 0.16666666666666666,
+                "num_classes": 6,
+                "num_train_cells": 5004,
+                "num_test_cells": 20000
+              },
+              "disease": {
+                "model": "linear",
+                "accuracy": 0.70015,
+                "balanced_accuracy": 0.7459627356624382,
+                "macro_f1": 0.673347396515367,
+                "majority_baseline": 0.34355,
+                "uniform_chance": 0.14285714285714285,
+                "num_classes": 7,
+                "num_train_cells": 4834,
+                "num_test_cells": 20000
+              }
+            },
+            "atlas_transfer_probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.4260112079010154,
+                "balanced_accuracy": 0.4844230005000598,
+                "macro_f1": 0.29767418192243333,
+                "majority_baseline": 0.0,
+                "uniform_chance": 0.125,
+                "num_classes": 8,
+                "num_train_cells": 4297,
+                "num_test_cells": 36046
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.41040462427745666,
+                "balanced_accuracy": 0.27551021542241944,
+                "macro_f1": 0.08085877162879798,
+                "majority_baseline": 0.0,
+                "uniform_chance": 0.02631578947368421,
+                "num_classes": 38,
+                "num_train_cells": 14383,
+                "num_test_cells": 7612
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.8183217859892224,
+                "balanced_accuracy": 0.8183217859892224,
+                "macro_f1": 0.30002822466836016,
+                "majority_baseline": 0.0,
+                "uniform_chance": 0.3333333333333333,
+                "num_classes": 3,
+                "num_train_cells": 3072,
+                "num_test_cells": 2598
+              },
+              "disease": null
+            },
+            "clisi": {
+              "coarse_cell_type": {
+                "lisi": 1.2648967504501343,
+                "lisi_normalized": 0.052979350090026855,
+                "num_classes": 6,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "cell_type": {
+                "lisi": 2.881347894668579,
+                "lisi_normalized": 0.0342063270509243,
+                "num_classes": 56,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "cross_dataset_transfer": {
+              "mean_accuracy": 0.7472539779071748,
+              "mean_balanced_accuracy": 0.6421009988907869,
+              "mean_macro_f1": 0.5948516834404949,
+              "mean_majority_baseline": 0.23911134034129616,
+              "num_folds": 5,
+              "num_groups": 9,
+              "folds": [
+                {
+                  "model": "linear",
+                  "accuracy": 0.8671197562690415,
+                  "balanced_accuracy": 0.6431488829151931,
+                  "macro_f1": 0.6727388968555876,
+                  "majority_baseline": 0.6990860089055543,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 5120,
+                  "num_test_cells": 4267,
+                  "held_out_groups": [
+                    "e067e5ca-e53e-485f-aa8e-efd5435229c8",
+                    "0b4a15a7-4e9e-4555-9733-2423e5c66469"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.7071814426437877,
+                  "balanced_accuracy": 0.5158151865079996,
+                  "macro_f1": 0.4701411885240607,
+                  "majority_baseline": 0.007149666348903718,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 5120,
+                  "num_test_cells": 12588,
+                  "held_out_groups": [
+                    "bd65a70f-b274-4133-b9dd-0d1431b6af34",
+                    "ea01c125-67a7-4bd3-a8b0-e1b53a011b7e"
+                  ],
+                  "unseen_label_fraction": 0.0007937767899666159
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.5753205128205128,
+                  "balanced_accuracy": 0.6910755902798186,
+                  "macro_f1": 0.5681992242604457,
+                  "majority_baseline": 0.38301282051282054,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 5120,
+                  "num_test_cells": 624,
+                  "held_out_groups": [
+                    "4c6f9f26-5470-455b-8933-c408232fbf56",
+                    "f801b7a9-80a6-4d09-9161-71474deb58ae"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.8231710888537457,
+                  "balanced_accuracy": 0.6218460330924487,
+                  "macro_f1": 0.6389394640619278,
+                  "majority_baseline": 0.10630820593920225,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 4712,
+                  "num_test_cells": 17073,
+                  "held_out_groups": [
+                    "32b9bdce-2481-4c85-ba1b-6ad5fcea844c",
+                    "07854d9c-5375-4a9b-ac34-fa919d3c3686"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.7634770889487871,
+                  "balanced_accuracy": 0.738619301658475,
+                  "macro_f1": 0.6242396435004525,
+                  "majority_baseline": 0.0,
+                  "uniform_chance": 0.2,
+                  "num_classes": 5,
+                  "num_train_cells": 5120,
+                  "num_test_cells": 1484,
+                  "held_out_groups": [
+                    "be39785b-67cb-4177-be19-a40ee3747e45"
+                  ],
+                  "unseen_label_fraction": 0.0
+                }
+              ]
+            }
+          },
+          "summary": {
+            "dataset_leakage_ratio": 0.7676240208877284,
+            "assay_leakage_ratio": 0.6902109815227362,
+            "donor_leakage_ratio": 0.3791926307233812,
+            "coarse_cell_type_readout_ratio": 0.7802943425076454,
+            "cross_dataset_cell_type_balanced_accuracy": 0.6421009988907869,
+            "dataset_ilisi_normalized": 0.07272976636886597,
+            "coarse_cell_type_clisi_normalized": 0.052979350090026855
+          }
+        }
+      },
+      "verdict": {
+        "thresholds": {
+          "max_relative_dataset_leakage": 0.5,
+          "min_relative_biology_retention": 0.9,
+          "min_technical_branch_dataset_leakage": 0.8,
+          "max_technical_branch_biology_leakage": 0.2
+        },
+        "reference_representation": "input_expression",
+        "views": {
+          "latent": {
+            "relative_dataset_leakage": 1.048128342245989,
+            "batch_leakage_reduced": false,
+            "relative_biology_retention": 1.1294654299563862,
+            "biology_preserved": true,
+            "disentangled": false
+          }
+        }
+      }
+    },
+    "atlas_ood_disease_2608": {
+      "splits": [
+        "train",
+        "val",
+        "test"
+      ],
+      "num_cells": 40000,
+      "num_datasets": 12,
+      "representations": {
+        "input_expression": {
+          "batch_leakage": {
+            "probes": {
+              "dataset_id": {
+                "model": "linear",
+                "accuracy": 0.8426994480682388,
+                "balanced_accuracy": 0.8070990796970434,
+                "macro_f1": 0.7757050471249781,
+                "majority_baseline": 0.5091821374811841,
+                "uniform_chance": 0.1,
+                "num_classes": 10,
+                "num_train_cells": 7340,
+                "num_test_cells": 19930
+              },
+              "assay": {
+                "model": "linear",
+                "accuracy": 0.82515,
+                "balanced_accuracy": 0.8127127101013225,
+                "macro_f1": 0.7924153567040066,
+                "majority_baseline": 0.4605,
+                "uniform_chance": 0.25,
+                "num_classes": 4,
+                "num_train_cells": 4096,
+                "num_test_cells": 20000
+              },
+              "donor_id": {
+                "model": "linear",
+                "accuracy": 0.24011502516175415,
+                "balanced_accuracy": 0.17779638724857275,
+                "macro_f1": 0.16910107159580995,
+                "majority_baseline": 0.01881140666187395,
+                "uniform_chance": 0.003875968992248062,
+                "num_classes": 258,
+                "num_train_cells": 16906,
+                "num_test_cells": 16692
+              }
+            },
+            "ilisi": {
+              "dataset_id": {
+                "lisi": 2.2223544120788574,
+                "lisi_normalized": 0.11112312972545624,
+                "num_classes": 12,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "assay": {
+                "lisi": 2.2976675033569336,
+                "lisi_normalized": 0.43255582451820374,
+                "num_classes": 4,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "kbet": {
+              "dataset_id": {
+                "acceptance_rate": 0.3551,
+                "rejection_rate": 0.6449,
+                "num_classes": 12,
+                "num_cells": 10000,
+                "k": 40
+              },
+              "assay": {
+                "acceptance_rate": 0.1748,
+                "rejection_rate": 0.8252,
+                "num_classes": 4,
+                "num_cells": 10000,
+                "k": 40
+              }
+            }
+          },
+          "biology_conservation": {
+            "probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.894485257119855,
+                "balanced_accuracy": 0.7968009033607888,
+                "macro_f1": 0.7385417171968048,
+                "majority_baseline": 0.8168461306229244,
+                "uniform_chance": 0.125,
+                "num_classes": 8,
+                "num_train_cells": 4664,
+                "num_test_cells": 19874
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.6813442081354533,
+                "balanced_accuracy": 0.492058274869319,
+                "macro_f1": 0.5169031211166605,
+                "majority_baseline": 0.15140408837497418,
+                "uniform_chance": 0.016666666666666666,
+                "num_classes": 60,
+                "num_train_cells": 14425,
+                "num_test_cells": 19372
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.8958396141091347,
+                "balanced_accuracy": 0.4965023953455404,
+                "macro_f1": 0.4685362264484042,
+                "majority_baseline": 0.7675108029343785,
+                "uniform_chance": 0.047619047619047616,
+                "num_classes": 21,
+                "num_train_cells": 5782,
+                "num_test_cells": 19902
+              },
+              "disease": {
+                "model": "linear",
+                "accuracy": 0.6293527345709985,
+                "balanced_accuracy": 0.6493269443252697,
+                "macro_f1": 0.571330213091029,
+                "majority_baseline": 0.6427496236828901,
+                "uniform_chance": 0.1,
+                "num_classes": 10,
+                "num_train_cells": 6416,
+                "num_test_cells": 19930
+              }
+            },
+            "atlas_transfer_probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.9137497485415409,
+                "balanced_accuracy": 0.5796883023614531,
+                "macro_f1": 0.5809697917831007,
+                "majority_baseline": 0.05092033796016898,
+                "uniform_chance": 0.125,
+                "num_classes": 8,
+                "num_train_cells": 4297,
+                "num_test_cells": 39768
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.3136122721592623,
+                "balanced_accuracy": 0.36397532988543674,
+                "macro_f1": 0.22477636187766314,
+                "majority_baseline": 0.05791356056362305,
+                "uniform_chance": 0.02631578947368421,
+                "num_classes": 38,
+                "num_train_cells": 14383,
+                "num_test_cells": 23207
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.8797837072322894,
+                "balanced_accuracy": 0.7261891107530368,
+                "macro_f1": 0.3663681691774652,
+                "majority_baseline": 0.0,
+                "uniform_chance": 0.3333333333333333,
+                "num_classes": 3,
+                "num_train_cells": 3072,
+                "num_test_cells": 31069
+              },
+              "disease": null
+            },
+            "clisi": {
+              "coarse_cell_type": {
+                "lisi": 1.2382372617721558,
+                "lisi_normalized": 0.034033894538879395,
+                "num_classes": 8,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "cell_type": {
+                "lisi": 7.869884490966797,
+                "lisi_normalized": 0.06481023132801056,
+                "num_classes": 107,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "cross_dataset_transfer": {
+              "mean_accuracy": 0.6981894816371922,
+              "mean_balanced_accuracy": 0.5111815648934732,
+              "mean_macro_f1": 0.32945907609524727,
+              "mean_majority_baseline": 0.6280599238955434,
+              "num_folds": 5,
+              "num_groups": 12,
+              "folds": [
+                {
+                  "model": "linear",
+                  "accuracy": 0.6299112801013942,
+                  "balanced_accuracy": 0.5324527635345271,
+                  "macro_f1": 0.49796399585860146,
+                  "majority_baseline": 0.3316434305027461,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 5609,
+                  "num_test_cells": 2367,
+                  "held_out_groups": [
+                    "d41f45c1-1b7b-4573-a998-ac5c5acb1647",
+                    "6c600df6-ddca-4628-a8bb-1d6de1e3f9b4",
+                    "f15e263b-6544-46cb-a46e-e33ab7ce8347"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.4294169872743415,
+                  "balanced_accuracy": 0.36921145798118465,
+                  "macro_f1": 0.22877398289956363,
+                  "majority_baseline": 0.5788694880142053,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 4883,
+                  "num_test_cells": 3379,
+                  "held_out_groups": [
+                    "7f08cbcc-5790-4576-8478-10e9a999b316",
+                    "cf83c98a-3791-4537-bbde-a719f6d73c13",
+                    "248cf7bf-508b-4c28-a2fd-cabe2ab956aa"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.7210859055410933,
+                  "balanced_accuracy": 0.5867343693202473,
+                  "macro_f1": 0.20848272872140983,
+                  "majority_baseline": 0.4871699516548903,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 5776,
+                  "num_test_cells": 2689,
+                  "held_out_groups": [
+                    "85c60876-7f35-40c5-a256-7808d84c6ba5",
+                    "518d9049-2a76-44f8-8abc-1e2b59ab5ba1"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.8000786898145871,
+                  "balanced_accuracy": 0.494727630436823,
+                  "macro_f1": 0.2813933750821911,
+                  "majority_baseline": 0.9853440220331481,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 5920,
+                  "num_test_cells": 20333,
+                  "held_out_groups": [
+                    "9dbab10c-118d-496b-966a-67f1763a6b7d",
+                    "af8b241a-c72c-4470-b1a4-80e7336c6ab6"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.9104545454545454,
+                  "balanced_accuracy": 0.5727816031945842,
+                  "macro_f1": 0.4306812979144702,
+                  "majority_baseline": 0.7572727272727273,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 4838,
+                  "num_test_cells": 11000,
+                  "held_out_groups": [
+                    "94c41723-b2c4-4b59-a49a-64c9b851903e",
+                    "c7775e88-49bf-4ba2-a03b-93f00447c958"
+                  ],
+                  "unseen_label_fraction": 0.0
+                }
+              ]
+            }
+          },
+          "summary": {
+            "dataset_leakage_ratio": 0.6795133919443876,
+            "assay_leakage_ratio": 0.6759036144578314,
+            "donor_leakage_ratio": 0.2255464647698132,
+            "coarse_cell_type_readout_ratio": 0.42390109890109867,
+            "cross_dataset_cell_type_balanced_accuracy": 0.5111815648934732,
+            "dataset_ilisi_normalized": 0.11112312972545624,
+            "coarse_cell_type_clisi_normalized": 0.034033894538879395
+          }
+        },
+        "latent": {
+          "batch_leakage": {
+            "probes": {
+              "dataset_id": {
+                "model": "linear",
+                "accuracy": 0.7997992975413949,
+                "balanced_accuracy": 0.847152495113329,
+                "macro_f1": 0.8130503115861683,
+                "majority_baseline": 0.5091821374811841,
+                "uniform_chance": 0.1,
+                "num_classes": 10,
+                "num_train_cells": 7340,
+                "num_test_cells": 19930
+              },
+              "assay": {
+                "model": "linear",
+                "accuracy": 0.80705,
+                "balanced_accuracy": 0.826861079801472,
+                "macro_f1": 0.8063415756182297,
+                "majority_baseline": 0.4605,
+                "uniform_chance": 0.25,
+                "num_classes": 4,
+                "num_train_cells": 4096,
+                "num_test_cells": 20000
+              },
+              "donor_id": {
+                "model": "linear",
+                "accuracy": 0.3287802540138989,
+                "balanced_accuracy": 0.26951179022919985,
+                "macro_f1": 0.26345159546999813,
+                "majority_baseline": 0.01881140666187395,
+                "uniform_chance": 0.003875968992248062,
+                "num_classes": 258,
+                "num_train_cells": 16906,
+                "num_test_cells": 16692
+              }
+            },
+            "ilisi": {
+              "dataset_id": {
+                "lisi": 1.6819952726364136,
+                "lisi_normalized": 0.061999570578336716,
+                "num_classes": 12,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "assay": {
+                "lisi": 1.6915934085845947,
+                "lisi_normalized": 0.23053114116191864,
+                "num_classes": 4,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "kbet": {
+              "dataset_id": {
+                "acceptance_rate": 0.2338,
+                "rejection_rate": 0.7662,
+                "num_classes": 12,
+                "num_cells": 10000,
+                "k": 40
+              },
+              "assay": {
+                "acceptance_rate": 0.0277,
+                "rejection_rate": 0.9723,
+                "num_classes": 4,
+                "num_cells": 10000,
+                "k": 40
+              }
+            }
+          },
+          "biology_conservation": {
+            "probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.9343866358055751,
+                "balanced_accuracy": 0.8972551855774438,
+                "macro_f1": 0.8457551487466204,
+                "majority_baseline": 0.8168461306229244,
+                "uniform_chance": 0.125,
+                "num_classes": 8,
+                "num_train_cells": 4664,
+                "num_test_cells": 19874
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.7352880446004543,
+                "balanced_accuracy": 0.5723569937118519,
+                "macro_f1": 0.5846524690139202,
+                "majority_baseline": 0.15140408837497418,
+                "uniform_chance": 0.016666666666666666,
+                "num_classes": 60,
+                "num_train_cells": 14425,
+                "num_test_cells": 19372
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.9262888151944528,
+                "balanced_accuracy": 0.5602588639098305,
+                "macro_f1": 0.5394193043118461,
+                "majority_baseline": 0.7675108029343785,
+                "uniform_chance": 0.047619047619047616,
+                "num_classes": 21,
+                "num_train_cells": 5782,
+                "num_test_cells": 19902
+              },
+              "disease": {
+                "model": "linear",
+                "accuracy": 0.733567486201706,
+                "balanced_accuracy": 0.7341010172537412,
+                "macro_f1": 0.6701015647825046,
+                "majority_baseline": 0.6427496236828901,
+                "uniform_chance": 0.1,
+                "num_classes": 10,
+                "num_train_cells": 6416,
+                "num_test_cells": 19930
+              }
+            },
+            "atlas_transfer_probes": {
+              "coarse_cell_type": {
+                "model": "linear",
+                "accuracy": 0.9145041239187286,
+                "balanced_accuracy": 0.6094703607801301,
+                "macro_f1": 0.5795936468174959,
+                "majority_baseline": 0.05092033796016898,
+                "uniform_chance": 0.125,
+                "num_classes": 8,
+                "num_train_cells": 4297,
+                "num_test_cells": 39768
+              },
+              "cell_type": {
+                "model": "linear",
+                "accuracy": 0.333347696815616,
+                "balanced_accuracy": 0.4239695261246703,
+                "macro_f1": 0.22856997861795172,
+                "majority_baseline": 0.05791356056362305,
+                "uniform_chance": 0.02631578947368421,
+                "num_classes": 38,
+                "num_train_cells": 14383,
+                "num_test_cells": 23207
+              },
+              "tissue": {
+                "model": "linear",
+                "accuracy": 0.8944929028935595,
+                "balanced_accuracy": 0.8907231412772505,
+                "macro_f1": 0.4022367455074736,
+                "majority_baseline": 0.0,
+                "uniform_chance": 0.3333333333333333,
+                "num_classes": 3,
+                "num_train_cells": 3072,
+                "num_test_cells": 31069
+              },
+              "disease": null
+            },
+            "clisi": {
+              "coarse_cell_type": {
+                "lisi": 1.14059317111969,
+                "lisi_normalized": 0.020084738731384277,
+                "num_classes": 8,
+                "num_cells": 20000,
+                "k": 90
+              },
+              "cell_type": {
+                "lisi": 2.8315789699554443,
+                "lisi_normalized": 0.017279047518968582,
+                "num_classes": 107,
+                "num_cells": 20000,
+                "k": 90
+              }
+            },
+            "cross_dataset_transfer": {
+              "mean_accuracy": 0.7710897939820661,
+              "mean_balanced_accuracy": 0.5670926953301334,
+              "mean_macro_f1": 0.39872166794495206,
+              "mean_majority_baseline": 0.6280599238955434,
+              "num_folds": 5,
+              "num_groups": 12,
+              "folds": [
+                {
+                  "model": "linear",
+                  "accuracy": 0.7135614702154626,
+                  "balanced_accuracy": 0.6503925433855866,
+                  "macro_f1": 0.5839577951104081,
+                  "majority_baseline": 0.3316434305027461,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 5609,
+                  "num_test_cells": 2367,
+                  "held_out_groups": [
+                    "d41f45c1-1b7b-4573-a998-ac5c5acb1647",
+                    "6c600df6-ddca-4628-a8bb-1d6de1e3f9b4",
+                    "f15e263b-6544-46cb-a46e-e33ab7ce8347"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.5767978691920687,
+                  "balanced_accuracy": 0.5170774511834372,
+                  "macro_f1": 0.30193037306779275,
+                  "majority_baseline": 0.5788694880142053,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 4883,
+                  "num_test_cells": 3379,
+                  "held_out_groups": [
+                    "7f08cbcc-5790-4576-8478-10e9a999b316",
+                    "cf83c98a-3791-4537-bbde-a719f6d73c13",
+                    "248cf7bf-508b-4c28-a2fd-cabe2ab956aa"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.7452584603941986,
+                  "balanced_accuracy": 0.5012851387374289,
+                  "macro_f1": 0.23681526778749865,
+                  "majority_baseline": 0.4871699516548903,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 5776,
+                  "num_test_cells": 2689,
+                  "held_out_groups": [
+                    "85c60876-7f35-40c5-a256-7808d84c6ba5",
+                    "518d9049-2a76-44f8-8abc-1e2b59ab5ba1"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.8831948064722372,
+                  "balanced_accuracy": 0.5775196612924466,
+                  "macro_f1": 0.34514761107401304,
+                  "majority_baseline": 0.9853440220331481,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 5920,
+                  "num_test_cells": 20333,
+                  "held_out_groups": [
+                    "9dbab10c-118d-496b-966a-67f1763a6b7d",
+                    "af8b241a-c72c-4470-b1a4-80e7336c6ab6"
+                  ],
+                  "unseen_label_fraction": 0.0
+                },
+                {
+                  "model": "linear",
+                  "accuracy": 0.9366363636363636,
+                  "balanced_accuracy": 0.589188682051768,
+                  "macro_f1": 0.5257572926850477,
+                  "majority_baseline": 0.7572727272727273,
+                  "uniform_chance": 0.125,
+                  "num_classes": 8,
+                  "num_train_cells": 4838,
+                  "num_test_cells": 11000,
+                  "held_out_groups": [
+                    "94c41723-b2c4-4b59-a49a-64c9b851903e",
+                    "c7775e88-49bf-4ba2-a03b-93f00447c958"
+                  ],
+                  "unseen_label_fraction": 0.0
+                }
+              ]
+            }
+          },
+          "summary": {
+            "dataset_leakage_ratio": 0.5921079533837661,
+            "assay_leakage_ratio": 0.6423540315106581,
+            "donor_leakage_ratio": 0.315911588716571,
+            "coarse_cell_type_readout_ratio": 0.6417582417582418,
+            "cross_dataset_cell_type_balanced_accuracy": 0.5670926953301334,
+            "dataset_ilisi_normalized": 0.061999570578336716,
+            "coarse_cell_type_clisi_normalized": 0.020084738731384277
+          }
+        }
+      },
+      "verdict": {
+        "thresholds": {
+          "max_relative_dataset_leakage": 0.5,
+          "min_relative_biology_retention": 0.9,
+          "min_technical_branch_dataset_leakage": 0.8,
+          "max_technical_branch_biology_leakage": 0.2
+        },
+        "reference_representation": "input_expression",
+        "views": {
+          "latent": {
+            "relative_dataset_leakage": 0.8713705431021513,
+            "batch_leakage_reduced": false,
+            "relative_biology_retention": 1.10937626525775,
+            "biology_preserved": true,
+            "disentangled": false
+          }
+        }
+      }
+    }
+  },
+  "runtime_seconds": 1394.2531905174255
+}

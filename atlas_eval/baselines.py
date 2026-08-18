@@ -77,15 +77,21 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument("--skip-neighbor-metrics", action="store_true")
     parser.add_argument("--transfer-folds", type=int, default=5)
     parser.add_argument("--output", default=None, help="Defaults to <run root>/<run-id>/baseline_scorecard.json")
+    parser.add_argument("--score-only", action="store_true",
+                        help="Skip training; load saved model from <run root>/<run-id>/<method>_model/")
+    from atlas_eval.scorecard import DEFAULT_THRESHOLDS
+
+    for name in DEFAULT_THRESHOLDS:
+        parser.add_argument(f"--{name.replace('_', '-')}", type=float, default=DEFAULT_THRESHOLDS[name])
     return parser.parse_args(argv)
 
 
-def load_config_and_root(config_path: str):
+def load_config_and_root(config_path: str, run_id: str):
     ensure_on_path()
     from vq_pipeline.runtime import load_config, make_output_dirs
 
     config = load_config(config_path)
-    out = make_output_dirs(config, None)
+    out = make_output_dirs(config, run_id)
     return config, out
 
 
@@ -191,7 +197,7 @@ def train_baseline(
         max_epochs=int(max_epochs),
         early_stopping=early,
         early_stopping_patience=int(patience),
-        early_stopping_monitor="val_loss",
+        early_stopping_monitor="validation_loss",
         plan_kwargs={},
         batch_size=batch_size or 128,
     )
@@ -203,7 +209,7 @@ def train_baseline(
         "epochs_run": n_epochs,
         "train_cells": int(adata.n_obs),
         "early_stopping": early,
-        "best_val_loss": float(history["val_loss"].min()) if early and "val_loss" in history else None,
+        "best_val_loss": float(history["validation_loss"].min()) if early and "validation_loss" in history else None,
         "final_train_loss": float(history["train_loss_epoch"].iloc[-1]) if "train_loss_epoch" in history else None,
     }
     if method == "scanvi":
@@ -217,12 +223,45 @@ def train_baseline(
     return scvi_model, info
 
 
+def load_baseline(method: str, model_dir: Path, adata: Optional[Any] = None) -> Any:
+    import scvi
+
+    if method == "scanvi":
+        model = scvi.model.SCANVI.load(str(model_dir), adata=adata)
+    else:
+        model = scvi.model.SCVI.load(str(model_dir), adata=adata)
+    return model
+
+
 def _project(features: np.ndarray, dim: int, seed: int) -> np.ndarray:
     if dim <= 0 or features.shape[1] <= dim:
         return features
     rng = np.random.default_rng(seed)
     matrix = rng.standard_normal((features.shape[1], dim)) / np.sqrt(dim)
     return features @ matrix
+
+
+def _remap_unseen_labels(adata: Any, model: Any) -> None:
+    """Rewrite scANVI label values unseen at training time to the unlabeled category.
+
+    scANVI's label field hard-codes ``extend_categories=False`` on transfer
+    ("don't extend labels for query data"), so query bundles containing cell
+    types absent from the training registry would crash inference.  Echoing the
+    intended semantics of ``unlabeled_category``, remap those to ``unknown``.
+    """
+    import pandas as pd
+
+    registry = model.adata_manager.registry
+    label_state = registry["field_registries"]["labels"]["state_registry"]
+    known = np.asarray(list(label_state["categorical_mapping"]))
+    key = label_state["original_key"]
+    if key in adata.obs:
+        col = np.asarray(adata.obs[key].values, dtype=object)
+        unseen = ~pd.Index(col).isin(known)
+        if unseen.any():
+            col[unseen] = str(label_state["unlabeled_category"])
+            adata.obs[key] = col
+            print(f"[encode_bundle] remapped {int(unseen.sum())} unseen labels to 'unknown'", flush=True)
 
 
 def encode_bundle(
@@ -236,14 +275,24 @@ def encode_bundle(
 ) -> RepresentationPack:
     """Encode one bundle: scVI latent plus a deterministic log1p reference view."""
     adata = build_anndata(config, data_run_id, splits, max_cells, seed)
+    try:
+        if model.__class__.__name__ == "SCANVI":
+            _remap_unseen_labels(adata, model)
+        manager = model.adata_manager.transfer_fields(adata, extend_categories=True)
+        model._register_manager_for_instance(manager)
+    except Exception:  # noqa: BLE001
+        pass
     latent = np.asarray(model.get_latent_representation(adata)).astype(np.float32)
     labels = {name: np.asarray(adata.obs[name].values, dtype=object) for name in LABEL_FIELDS
               if name in adata.obs}
 
-    counts = np.asarray(adata.X, dtype=np.float32)
+    counts = adata.X.toarray() if hasattr(adata.X, "toarray") else np.asarray(adata.X)
+    counts = np.asarray(counts, dtype=np.float32)
     sums = np.asarray(counts.sum(axis=1)).ravel()
     normalized = counts / (sums[:, None] / 10_000.0)
     normalized = np.log1p(normalized)
+    if hasattr(normalized, "toarray"):
+        normalized = normalized.toarray()
     normalized = np.asarray(normalized, dtype=np.float32)
 
     pack = RepresentationPack(
@@ -266,8 +315,8 @@ def encode_bundle(
 def main(argv: Optional[Sequence[str]] = None) -> Dict[str, Any]:
     args = parse_args(argv)
     started = time.time()
-    config, out = load_config_and_root(args.config)
-    out_root = Path(out["root"]) / args.run_id
+    config, out = load_config_and_root(args.config, args.run_id)
+    out_root = Path(out["root"])
     out_root.mkdir(parents=True, exist_ok=True)
 
     print(f"[baselines {args.method}] building train anndata from {args.fit_data_run_id}/{args.fit_splits}")
@@ -282,16 +331,23 @@ def main(argv: Optional[Sequence[str]] = None) -> Dict[str, Any]:
         except Exception as error:  # noqa: BLE001
             print(f"[baselines] no validation split ({error}); training without early stopping")
 
-    model, info = train_baseline(
-        train_adata, args.method, val_adata=val_adata,
-        n_latent=args.n_latent, max_epochs=args.max_epochs,
-        patience=args.early_stopping_patience, batch_size=args.batch_size, seed=args.seed,
-    )
-    print(f"[baselines] training done: {info}")
     model_dir = out_root / f"{args.method}_model"
-    model_dir.mkdir(parents=True, exist_ok=True)
-    model.save(str(model_dir), overwrite=True)
-    print(f"[baselines] saved model to {model_dir}")
+    if args.score_only:
+        print(f"[baselines {args.method}] score-only: loading model from {model_dir}")
+        model = load_baseline(args.method, model_dir, adata=train_adata)
+        info: Dict[str, Any] = {"method": args.method, "n_latent": int(args.n_latent),
+                                "epochs_run": None, "train_cells": None,
+                                "early_stopping": None, "score_only": True}
+    else:
+        model, info = train_baseline(
+            train_adata, args.method, val_adata=val_adata,
+            n_latent=args.n_latent, max_epochs=args.max_epochs,
+            patience=args.early_stopping_patience, batch_size=args.batch_size, seed=args.seed,
+        )
+        print(f"[baselines] training done: {info}")
+        model_dir.mkdir(parents=True, exist_ok=True)
+        model.save(str(model_dir), overwrite=True, save_anndata=True)
+        print(f"[baselines] saved model to {model_dir}")
 
     from atlas_eval import scorecard as SC
 
