@@ -3,10 +3,13 @@
 Discrete representation learning for single-cell RNA-seq with batch-aware decoding,
 adversarial batch disentanglement, and cell-type classification.
 
-Real-data training matches scVI on batch mixing, cell-type conservation, and
-cross-batch transfer — while yielding a discrete 64-code latent the baselines lack.
-See `DISENTANGLE_RESULTS.md` and `PROJECT_UPDATE.md` for the full results (161k cells,
-15 donors, 16 cell types).
+**Results.** In-distribution (161k-cell CellxGene cohort, 15 donors, 16 cell types) the
+VQ-VAE is comparable to scVI across batch mixing, cell-type conservation, and cross-batch
+transfer while yielding a discrete latent. On out-of-distribution whole-dataset holdouts
+the picture separates: scVI/scANVI fail every OOD rung (dataset leakage up to 4.31x raw
+input), while our model passes the unseen-protocol and unseen-disease rungs (leakage
+0.43x / 0.00x) — see `results/benchmark/BENCHMARK.md`. Full single-dataset sweep:
+`DISENTANGLE_RESULTS.md`; formal write-up: `PROJECT_UPDATE.md`.
 
 ## Quick Start
 
@@ -79,6 +82,34 @@ Key real-data flags:
 | `--code-batch-weight` | 2.0 | code↔batch independence regularizer |
 | `--use-adversary` | off | DANN-style adversarial batch classifier |
 | `--alpha-ramp` | 6 | epochs over which the adversary ramps up |
+
+## FSQ-VAE (codebook-free variant)
+
+`fsq_vae2.py` replaces the learned codebook with Finite Scalar Quantization — analytic
+`tanh -> round` with straight-through gradients over per-dimension levels
+(e.g. `[8,8,8]` = 512 codes). No EMA, no dead-code restart, no commitment term. Same
+heads otherwise: DANN batch adversary, cell-type classifier, NB decoder with a learned
+library-size encoder.
+
+```bash
+python fsq_vae2.py --levels 8 8 8 --use-adversary   # see argparse for data flags
+python fsq_marker_val.py --checkpoint <ckpt>        # per-code cell type + marker genes
+```
+
+## Atlas-scale evaluation (`atlas_eval/`)
+
+The OOD-aware scorecard used for the benchmark table: dataset-leakage and biology-
+retention probes relative to raw input (pass: leak <= 0.5x, retention >= 0.9x),
+matched-biology whole-dataset holdouts, scVI/scANVI baseline scoring under identical
+metrics, and an adversary monitor. Entry points:
+
+```bash
+python eval_disentanglement.py ...    # single-checkpoint ID+OOD scorecard (see section below)
+python benchmark.py                   # unified multi-model aggregator -> results/benchmark/
+python make_scorecard_report.py       # markdown + PNG report from scorecard JSONs
+```
+
+Tests: `pytest tests/test_atlas_eval.py`.
 
 ## Architecture
 

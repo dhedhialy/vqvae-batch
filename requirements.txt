@@ -8,3 +8,6 @@ scanpy>=1.10.0
 
 # Evaluation metrics (batch mixing / biological conservation)
 pandas>=1.5.0
+
+# scVI/scANVI baselines only (push_scvi.py, atlas_eval/baselines.py) — heavy,
+# install separately if reproducing baseline rows: scvi-tools>=1.1.0

@@ -89,3 +89,32 @@ representation corresponds to meaningful biology rather than batch artifacts.
   (baseline-compatible metrics), `sweep.sh` / `sweep2.sh` (disentanglement sweeps) —
   committed to the local repository.
 - Full numeric results: `DISENTANGLE_RESULTS.md`.
+
+## Update (August 2026): atlas-scale OOD benchmark
+
+The work was extended from a single dataset to an atlas-scale model (~1M cells,
+multi-tissue, three assays) with a reusable out-of-distribution evaluation framework
+(`atlas_eval/`) and an FSQ-VAE variant that removes the learned codebook entirely
+(Finite Scalar Quantization: analytic rounding with straight-through gradients).
+
+Evaluation moved from mixing-only LISI to a leakage/retention scorecard: dataset
+leakage of the biological latent relative to raw input (pass <= 0.5x) and biology
+retention relative to input (pass >= 0.9x), over whole-dataset holdouts.
+
+Headline (`results/benchmark/BENCHMARK.md`, leak/retention):
+
+| Model | Protocol OOD | Disease OOD | Matched-OOD |
+|---|---|---|---|
+| Ours bt5 w=0.50 | **0.43/1.04 PASS** | **0.00/0.97 PASS** | 1.07 fail |
+| Ours bt5 w=0.30 | 0.63 fail | **0.11/1.02 PASS** | 0.98 fail |
+| scVI | 1.17 fail | 1.00 fail | 1.55–4.31 fail |
+| scANVI | 1.10 fail | 0.87 fail | 1.42–3.38 fail |
+
+scVI/scANVI fail every rung because their per-dataset batch embeddings receive random
+values for held-out datasets; our model has no per-dataset parameters. Remaining honest
+gaps: matched-OOD (weak batch, strong biology) is unsolved by every model including
+ours, and tissue-OOD is structurally impossible without healthy kidney data in training.
+
+In-distribution caveat for precision: the single-dataset result is *comparable* to scVI
+(batch LISI 3.10 vs scVI's 3.28–3.66 — slightly less mixed; conservation and transfer
+equal within error), not strictly better on every axis.

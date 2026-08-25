@@ -137,6 +137,19 @@ optional heads on z:
 - Why discrete? → *Interpretability: each code is a cluster of cells you can annotate with genes/pathways; scVI's continuous latent has no such units.*
 - VQ vs FSQ? → *VQ learns codebook (EMA, restart, commitment). FSQ is analytic rounding with straight-through gradients — simpler, faster, no hyperparameters.*
 
+### ATLAS-SCALE RESULTS (Aug 2026 — know these too)
+- **Eval framework** `atlas_eval/`: leakage (dataset probe on bio latent vs raw input,
+  pass <= 0.5x) + retention (cross-dataset cell-type transfer, pass >= 0.9x); rungs =
+  in-distribution, matched-biology whole-dataset holdout, unseen protocol / tissue / disease.
+- **bt5 train**: cortex+blood+lung, ~1M cells, 3 assays; w = conditional-code-usage weight.
+- **Ours w=0.50**: protocol OOD 0.43/1.04 PASS; disease OOD 0.00/0.97 PASS; tissue 0.54/0.81
+  fail (no healthy kidney in healthy-only train — structural); matched-OOD ~1.07 fail.
+- **scVI/scANVI fail every rung**, leak up to 4.31x/3.38x input on matched rungs:
+  per-dataset batch embeddings are random for held-out datasets. Ours has no
+  per-dataset parameters — that's the mechanistic advantage.
+- **FSQ v2**: Finite Scalar Quantization replaces the codebook (tanh->round,
+  straight-through, levels [8,8,8] = 512 codes, learned library encoder).
+
 ---
 
 ## RAPID-FIRE DRILL (cover answers, recall)
