@@ -92,8 +92,8 @@ heads otherwise: DANN batch adversary, cell-type classifier, NB decoder with a l
 library-size encoder.
 
 ```bash
-python fsq_vae2.py --levels 8 8 8 --use-adversary   # see argparse for data flags
-python fsq_marker_val.py --checkpoint <ckpt>        # per-code cell type + marker genes
+python fsq_vae2.py                                    # trains L3x8 configs end-to-end (levels/weights set in __main__)
+python fsq_marker_val.py --checkpoint <ckpt>          # per-code cell type + marker genes
 ```
 
 ## Atlas-scale evaluation (`atlas_eval/`)
