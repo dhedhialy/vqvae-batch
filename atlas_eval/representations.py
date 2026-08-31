@@ -221,9 +221,14 @@ def extract_representations(
             z_e = outputs["z_e"]
             z_q, indices, _, _, distance, _ = model.quantize(z_e)
 
+            n_tech = int(getattr(model, "num_technical_axes", 0) or 0)
             store("input_expression", batch["x"])
             store("encoder_z_e", z_e.reshape(rows, -1))
             store("bio_z_q", z_q.reshape(rows, -1))
+            if 0 < n_tech < z_q.shape[1]:
+                store("bio_z_q_no_tech", z_q[:, n_tech:].reshape(rows, -1))
+            else:
+                store("bio_z_q_no_tech", z_q.reshape(rows, -1))
             store("bio_reconstruction", outputs["biological_recon"])
             store("full_reconstruction", outputs["x_recon"])
             store("technical_embedding", technical_embedding(model, categorical, rows, device))
@@ -253,6 +258,7 @@ def extract_representations(
             "projection_dim": int(projection_dim),
             "code_usage_temperature": temperature,
             "num_axes": int(model.num_axes),
+            "num_technical_axes": int(getattr(model, "num_technical_axes", 0) or 0),
             "codebook_size": int(model.codebook_size),
         },
     )

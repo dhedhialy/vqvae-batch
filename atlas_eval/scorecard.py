@@ -38,6 +38,7 @@ DEFAULT_REPRESENTATIONS = (
     "input_expression",
     "encoder_z_e",
     "bio_z_q",
+    "bio_z_q_no_tech",
     "bio_code_onehot",
     "technical_embedding",
     "bio_reconstruction",
@@ -49,7 +50,7 @@ DEFAULT_TARGETS = (
     "atlas_ood_unseen_tissue_2608",
     "atlas_ood_disease_2608",
 )
-BIO_VIEWS = ("bio_z_q", "bio_code_onehot")
+BIO_VIEWS = ("bio_z_q", "bio_code_onehot", "bio_z_q_no_tech")
 
 # Documented defaults for the verdict block; override on the command line.
 DEFAULT_THRESHOLDS = {
