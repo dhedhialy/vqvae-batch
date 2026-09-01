@@ -56,28 +56,31 @@ BUNDLE_LABELS = {
 }
 
 BIO_VIEWS = {"bio_z_q": "ours", "latent": "scVI/scANVI"}
+DEFAULT_BIO_VIEWS = ("bio_z_q", "latent")
 
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--model", action="append", nargs=2, metavar=("NAME", "SCORECARD_JSON"),
-                        help="Repeatable: model label + scorecard JSON path.")
+    parser.add_argument("--model", action="append", nargs="+", metavar=("NAME SCORECARD_JSON [VIEW]"),
+                        help="Repeatable: model label + scorecard JSON path, optionally a bio view name.")
     parser.add_argument("--output", default="BENCHMARK.md")
     return parser.parse_args(argv)
 
 
-def _view_name(scorecard: Dict[str, Any]) -> Optional[str]:
-    for view in ("bio_z_q", "latent"):
+def _view_name(scorecard: Dict[str, Any], override: Optional[str] = None) -> Optional[str]:
+    if override:
+        return override if override in scorecard.get("representations", {}) else None
+    for view in DEFAULT_BIO_VIEWS:
         if view in scorecard.get("representations", {}):
             return view
     return None
 
 
-def _cell(scorecard: Dict[str, Any], bundle_id: str) -> Tuple[Optional[float], Optional[float], Optional[bool]]:
+def _cell(scorecard: Dict[str, Any], bundle_id: str, view_override: Optional[str] = None) -> Tuple[Optional[float], Optional[float], Optional[bool]]:
     bundle = scorecard.get("bundles", {}).get(bundle_id)
     if not bundle:
         return None, None, None
-    view = _view_name(bundle)
+    view = _view_name(bundle, view_override)
     if view is None:
         return None, None, None
     verdict = bundle.get("verdict", {}).get("views", {}).get(view, {})
@@ -88,7 +91,7 @@ def _cell(scorecard: Dict[str, Any], bundle_id: str) -> Tuple[Optional[float], O
     )
 
 
-def build_markdown(models: List[Tuple[str, Dict[str, Any]]]) -> str:
+def build_markdown(models: List[Tuple[str, Dict[str, Any], Optional[str]]]) -> str:
     lines: List[str] = []
     lines.append("# Unified disentanglement benchmark")
     lines.append("")
@@ -99,16 +102,17 @@ def build_markdown(models: List[Tuple[str, Dict[str, Any]]]) -> str:
                  "for scVI/scANVI; the reference view is `input_expression` in both cases.")
     lines.append("")
 
-    for label, scorecard in models:
+    for label, scorecard, view_override in models:
         lines.append(f"- **{label}** — `{scorecard.get('run_id')}` "
                      f"({scorecard.get('model_type', 'vqvae')}, schema "
-                     f"v{scorecard.get('schema_version')})")
+                     f"v{scorecard.get('schema_version')})"
+                     + (f", bio view `{view_override}`" if view_override else ""))
     lines.append("")
 
     lines.append("| Model | " + " | ".join(BUNDLE_LABELS[b] for b in BUNDLE_ORDER) + " |")
     lines.append("|---|" + "---|" * len(BUNDLE_ORDER))
-    for label, scorecard in models:
-        cells = [_cell(scorecard, b) for b in BUNDLE_ORDER]
+    for label, scorecard, view_override in models:
+        cells = [_cell(scorecard, b, view_override) for b in BUNDLE_ORDER]
         rendered = []
         for leak, ret, verdict in cells:
             if leak is None:
@@ -131,10 +135,14 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
     if not args.model:
         raise SystemExit("pass at least one --model NAME SCORECARD_JSON")
 
-    models: List[Tuple[str, Dict[str, Any]]] = []
-    for label, path in args.model:
+    models: List[Tuple[str, Dict[str, Any], Optional[str]]] = []
+    for args_tuple in args.model:
+        if len(args_tuple) not in (2, 3):
+            raise SystemExit("each --model takes NAME SCORECARD_JSON [VIEW]")
+        label, path = args_tuple[0], args_tuple[1]
+        view_override = args_tuple[2] if len(args_tuple) == 3 else None
         scorecard = json.loads(Path(path).read_text(encoding="utf-8"))
-        models.append((label, scorecard))
+        models.append((label, scorecard, view_override))
 
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
